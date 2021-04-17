@@ -15,7 +15,7 @@
       "strictFunctionTypes": true,
       "noFallthroughCasesInSwitch": true,
       "lib": ["DOM","ES6", "ES2016"],
-      "outDir": "out",
+      "outDir": "scripts",
       "downlevelIteration": true,
       "strictBindCallApply": true,
       "strictNullChecks": true,
