@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "target": "ES2017",
+      "baseUrl": "./",
+      "noEmitHelpers": true,
+      "noImplicitUseStrict": true,
+      "noResolve": true,
+      "preserveConstEnums": true,
+      "removeComments": true,
+      "moduleResolution": "Node",
+      "forceConsistentCasingInFileNames": true,
+      "noImplicitReturns": true,
+      "noImplicitThis": true,
+      "pretty": true,
+      "strictFunctionTypes": true,
+      "noFallthroughCasesInSwitch": true,
+      "lib": ["DOM","ES6", "ES2016"],
+      "outDir": "out",
+      "downlevelIteration": true,
+      "strictBindCallApply": true,
+      "strictNullChecks": true,
+      "sourceMap": false,
+    }
+}
