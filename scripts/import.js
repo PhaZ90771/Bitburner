@@ -8,6 +8,7 @@ let filenames = [
     "autohack-target.js",
     "purchase-hacknet-node.js",
     "purchase-server-8gb.js",
+    "startup.js",
     "utilities.js",
 ];
 export async function main(ns) {

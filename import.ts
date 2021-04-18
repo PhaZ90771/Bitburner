@@ -13,6 +13,7 @@ let filenames: Array<string> = [
     "autohack-target.js",
     "purchase-hacknet-node.js",
     "purchase-server-8gb.js",
+    "startup.js",
     "utilities.js",
 ];
 
