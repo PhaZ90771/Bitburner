@@ -6,6 +6,6 @@ export function GetServers(ns: NS) {
     ns.tprint(servers);
 }
 
-export function getMoney(ns) {
+export function getMoney(ns: NS) {
     return ns.getServerMoneyAvailable("home");
 }
