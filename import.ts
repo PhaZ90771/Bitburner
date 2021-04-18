@@ -11,7 +11,7 @@ let importFilename = "import.js";
 
 let filenames = [
     "autohack-target.js",
-    //"purchase-hacknet-node.js",
+    "purchase-hacknet-node.js",
     "purchase-server-8gb.js",
     "utilities.js",
 ];
