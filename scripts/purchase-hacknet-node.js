@@ -140,7 +140,7 @@ function buyMaxCores(ns, i) {
     let numToBuy = 0;
     let continueCounting = true;
     while (continueCounting) {
-        let cost = ns.hacknet.getCorerUpgradeCost(i, numToBuy + 1);
+        let cost = ns.hacknet.getCoreUpgradeCost(i, numToBuy + 1);
         if (cost == Infinity) {
             return;
         }
