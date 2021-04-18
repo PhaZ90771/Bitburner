@@ -3618,7 +3618,7 @@ declare module "Bitburner" {
         run (
             script: Script,
             numThreads?: number,
-            ...args: string[]
+            ...args
         ): number;
 
         /**
