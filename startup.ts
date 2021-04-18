@@ -1,6 +1,4 @@
-// @ts-ignore 
-import {BitBurner as NS} from "BitBurner"
-
+import {BitBurner as NS} from "Bitburner"
 import {getServers, Server} from "/scripts/utilities.js"
 
 const home: string = "home";
@@ -9,7 +7,7 @@ const autohackScript: string = "/scripts/autohack-target.js";
 const pservAutobuyScript: string = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript: string = "/scripts/purchase-hacknet-node.js";
 
-export async function main(ns: NS) {
+export async function main(ns: NS): Promise<void> {
     disableLogs(ns);
 
     await homeStartup(ns);
@@ -38,7 +36,7 @@ export async function main(ns: NS) {
     }
 }
 
-function disableLogs(ns: NS) {
+function disableLogs(ns: NS): void {
     ns.disableLog("sleep");
     ns.disableLog("brutessh");
     ns.disableLog("ftpcrack");
@@ -54,7 +52,7 @@ function disableLogs(ns: NS) {
     ns.disableLog("getServerRam");
 }
 
-function countPortHackers(ns: NS) {
+function countPortHackers(ns: NS): number {
     let count: number = 0;
     if(ns.fileExists("BruteSSH.exe")) count++;
     if(ns.fileExists("FTPCrack.exe")) count++;
@@ -64,16 +62,16 @@ function countPortHackers(ns: NS) {
     return count;
 }
 
-function nextPortHackerToUnlock(ns: NS) {
+function nextPortHackerToUnlock(ns: NS): string {
     if(ns.fileExists("BruteSSH.exe")) return "BruteSSH.exe";
     if(ns.fileExists("FTPCrack.exe")) return "FTPCrack.exe";
     if(ns.fileExists("relaySMTP.exe")) return "relaySMTP.exe";
     if(ns.fileExists("HTTPWorm.exe")) return "HTTPWorm.exe";
     if(ns.fileExists("SQLInject.exe")) return "SQLInject.exe";
-    return null;
+    return "None";
 }
 
-function takeover(ns: NS, server: Server) {
+function takeover(ns: NS, server: Server): void {
     ns.print("");
     ns.print(`Server Takeover: ${server.hostname}`);
 
@@ -89,7 +87,7 @@ function takeover(ns: NS, server: Server) {
     }
 }
 
-function downloadLitFiles(ns: NS, server: Server) {
+function downloadLitFiles(ns: NS, server: Server): void {
     ns.print("Searching for lit files");
     const filter  = ".lit";
     let files: Array<string> = ns.ls(server.hostname, filter);
@@ -100,7 +98,7 @@ function downloadLitFiles(ns: NS, server: Server) {
     ns.print("Download lit files complete");
 }
 
-function nukeServer(ns: NS, server: Server) {
+function nukeServer(ns: NS, server: Server): boolean {
     if (server.rooted(ns)) {
         ns.print("Already redundant")
         return true;
@@ -121,7 +119,7 @@ function nukeServer(ns: NS, server: Server) {
     return false;
 }
 
-function setup(ns: NS, server: Server) {
+function setup(ns: NS, server: Server): void {
     ns.killall(server.hostname);
 
     var ram = server.ramFree(ns);
@@ -140,7 +138,7 @@ function setup(ns: NS, server: Server) {
     ns.print("Autohack setup success");
 }
 
-async function homeStartup(ns: NS) {
+async function homeStartup(ns: NS): Promise<void> {
     ns.print("");
     ns.print("Home Setup:");
 
@@ -158,7 +156,7 @@ async function homeStartup(ns: NS) {
 
     await ns.sleep(1000);;
 
-    let ram: number = ns.getServerRam(home);
+    let ram: Array<number> = ns.getServerRam(home);
     let ramFree: number = ram[0] - ram[1];
     let needed: number = ns.getScriptRam(autohackScript);
     let threads: number = ramFree / needed;

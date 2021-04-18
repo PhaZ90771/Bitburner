@@ -65,7 +65,7 @@ function nextPortHackerToUnlock(ns) {
         return "HTTPWorm.exe";
     if (ns.fileExists("SQLInject.exe"))
         return "SQLInject.exe";
-    return null;
+    return "None";
 }
 function takeover(ns, server) {
     ns.print("");

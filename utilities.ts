@@ -1,5 +1,4 @@
-// @ts-ignore 
-import {BitBurner as NS} from "BitBurner"
+import {BitBurner as NS} from "Bitburner"
 
 export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");

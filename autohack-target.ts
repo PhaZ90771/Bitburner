@@ -1,7 +1,6 @@
-// @ts-ignore 
-import {BitBurner as NS} from "BitBurner"
+import {BitBurner as NS} from "Bitburner"
 
-export async function main(ns: NS) {
+export async function main(ns: NS): Promise<void> {
     var target: string = ns.args[0];
     var moneyThresh: number = ns.getServerMaxMoney(target) * 0.75;
     var securityThresh: number = ns.getServerMinSecurityLevel(target) + 5;

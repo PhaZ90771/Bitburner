@@ -1,6 +1,4 @@
-// @ts-ignore 
-import {BitBurner as NS} from "BitBurner"
-
+import {BitBurner as NS} from "Bitburner"
 import {getServerPrefix as prefix} from "/scripts/import.js"
 import {getMoney} from "/scripts/utilities.js"
 
@@ -8,7 +6,7 @@ const ram: number = 8;
 const target: string = "foodnstuff";
 const script: string = "/scripts/autohack-target.js";
 
-export async function main(ns: NS) {
+export async function main(ns: NS): Promise<void> {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
 
@@ -40,7 +38,7 @@ export async function main(ns: NS) {
     }
 }
 
-function setup(ns: NS, server: string) {
+function setup(ns: NS, server: string): void {
     ns.killall(server);
     ns.scp(script, server);
     ns.exec(script, server, 3, target);

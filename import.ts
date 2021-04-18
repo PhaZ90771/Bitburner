@@ -1,5 +1,4 @@
-// @ts-ignore 
-import {BitBurner as NS} from "BitBurner"
+import {BitBurner as NS} from "Bitburner"
 
 let config: Config = {
     folder: "scripts",
@@ -17,7 +16,7 @@ let filenames: Array<string> = [
     "utilities.js",
 ];
 
-export async function main(ns: NS) {
+export async function main(ns: NS): Promise<void> {
     let secondStage: boolean = false;
     if (ns.args.length == 1 && typeof ns.args[0] === "boolean") {
         secondStage = ns.args[0];
@@ -44,7 +43,7 @@ export async function main(ns: NS) {
     }
 }
 
-async function importFiles(ns: NS) {
+async function importFiles(ns: NS): Promise<boolean> {
     let filesImported: boolean = true;
 
     for (let filename of filenames) {
@@ -56,19 +55,19 @@ async function importFiles(ns: NS) {
     return filesImported;
 }
 
-async function importImport(ns: NS) {
+async function importImport(ns: NS): Promise<boolean> {
     let result: boolean = await importFile(ns, importFilename)
     ns.tprint(`File: ${importFilename}: ${result ? '✔' : '✖'}`);
     return result;
 }
 
-async function importFile(ns: NS, filename) {
+async function importFile(ns: NS, filename): Promise<boolean> {
     let remoteFileName: string = `${config.rootUrl}scripts/${filename}`;
     let result: boolean = await ns.wget(remoteFileName, `/${config.folder}/${filename}`);
     return result;
 }
 
-export function getServerPrefix() {
+export function getServerPrefix(): string {
     return config.serverPrefix;
 }
 

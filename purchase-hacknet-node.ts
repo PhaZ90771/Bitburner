@@ -1,6 +1,4 @@
-// @ts-ignore 
-import {BitBurner as NS} from "BitBurner"
-
+import {BitBurner as NS} from "Bitburner"
 import {getMoney} from "/scripts/utilities.js"
 
 //hacknet.maxNumNodes() currently returns undefined, which amy be fixed in the future
@@ -12,7 +10,7 @@ const maxCores: number = 16;
 let nextNodeCost: number;
 let nodeCount: number;
 
-export async function main(ns: NS) {
+export async function main(ns: NS): Promise<void> {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("sleep");
 
@@ -73,19 +71,19 @@ export async function main(ns: NS) {
     ns.print("All nodes purchased and fully upgraded");
 }
 
-function updateNextNodeCost(ns: NS) {
+function updateNextNodeCost(ns: NS): void {
     nextNodeCost = ns.hacknet.getPurchaseNodeCost();
 }
 
-function updateNodeCount(ns: NS) {
+function updateNodeCount(ns: NS): void {
     nodeCount = ns.hacknet.numNodes();
 }
 
-function isAtMaxNodes(ns: NS) {
+function isAtMaxNodes(ns: NS): boolean {
     return nodeCount >= maxNodes;
 }
 
-function buyNode(ns: NS) {
+function buyNode(ns: NS): boolean {
     let money: number = getMoney(ns);
 
     if (nextNodeCost <= money) {
@@ -100,7 +98,7 @@ function buyNode(ns: NS) {
     return false;
 }
 
-async function buyMaxNodes(ns: NS) {
+async function buyMaxNodes(ns: NS): Promise<void> {
     let purchaseCount: number = 0;
     let continuePurchasing: boolean = true;
     let atMax: boolean = isAtMaxNodes(ns);
@@ -124,7 +122,7 @@ async function buyMaxNodes(ns: NS) {
     return;
 }
 
-async function buyMaxLevel(ns: NS, i: number) {
+async function buyMaxLevel(ns: NS, i: number): Promise<void> {
     let money: number = getMoney(ns);
     let numToBuy: number = 0;
     let continueCounting: boolean = true;
@@ -149,7 +147,7 @@ async function buyMaxLevel(ns: NS, i: number) {
     return;
 }
 
-async function buyMaxRam(ns: NS, i: number) {
+async function buyMaxRam(ns: NS, i: number): Promise<void> {
     let money: number = getMoney(ns);
     let numToBuy: number = 0;
     let continueCounting: boolean = true;
@@ -174,7 +172,7 @@ async function buyMaxRam(ns: NS, i: number) {
     return;
 }
 
-async function buyMaxCores(ns: NS, i: number) {
+async function buyMaxCores(ns: NS, i: number): Promise<void> {
     let money: number = getMoney(ns);
     let numToBuy: number = 0;
     let continueCounting: boolean = true;
