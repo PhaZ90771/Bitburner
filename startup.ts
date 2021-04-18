@@ -7,8 +7,11 @@ const autohackScript: Script = "/scripts/autohack-target.js";
 const pservAutobuyScript: Script = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 
+let homeRamSetAside: number = 100;
+
 export async function main(ns: NS): Promise<void> {
     disableLogs(ns);
+    getArgs(ns);
 
     await homeStartup(ns);
 
@@ -33,6 +36,12 @@ export async function main(ns: NS): Promise<void> {
         takeover(ns, server!);
 
         await ns.sleep(1);
+    }
+}
+
+function getArgs(ns: NS) {
+    if (ns.args.length > 0 && typeof ns.args[0] === "number" && ns.args[0] >= 0) {
+        homeRamSetAside = ns.args[0];
     }
 }
 
@@ -158,7 +167,7 @@ async function homeStartup(ns: NS): Promise<void> {
     await ns.sleep(1000);;
 
     let ram: Array<number> = ns.getServerRam(home);
-    let ramFree: number = ram[0] - ram[1];
+    let ramFree: number = ram[0] - ram[1] - homeRamSetAside;
     let needed: number = ns.getScriptRam(autohackScript);
     let threads: number = ramFree / needed;
 

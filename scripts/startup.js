@@ -4,8 +4,10 @@ const autohackTarget = "foodnstuff";
 const autohackScript = "/scripts/autohack-target.js";
 const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
+let homeRamSetAside = 100;
 export async function main(ns) {
     disableLogs(ns);
+    getArgs(ns);
     await homeStartup(ns);
     let serversToHack = getServers(ns);
     serversToHack.sort((a, b) => a.portsRequired - b.portsRequired);
@@ -23,6 +25,11 @@ export async function main(ns) {
         }
         takeover(ns, server);
         await ns.sleep(1);
+    }
+}
+function getArgs(ns) {
+    if (ns.args.length > 0 && typeof ns.args[0] === "number" && ns.args[0] >= 0) {
+        homeRamSetAside = ns.args[0];
     }
 }
 function disableLogs(ns) {
@@ -155,7 +162,7 @@ async function homeStartup(ns) {
     await ns.sleep(1000);
     ;
     let ram = ns.getServerRam(home);
-    let ramFree = ram[0] - ram[1];
+    let ramFree = ram[0] - ram[1] - homeRamSetAside;
     let needed = ns.getScriptRam(autohackScript);
     let threads = ramFree / needed;
     if (ns.isRunning(autohackScript, home)) {
