@@ -22,7 +22,7 @@ export async function main(ns: NS) {
     while (!maxed) {
         ns.print("Looking into buying nodes");
         if (!atMaxNodes) {
-            buyMaxNodes(ns);
+            await buyMaxNodes(ns);
             atMaxNodes = isAtMaxNodes(ns);
         }
         else {
@@ -38,7 +38,7 @@ export async function main(ns: NS) {
             // Level
             let atMaxLevel: boolean = stats!.level >= maxLevel;
             if (!atMaxLevel) {
-                buyMaxLevel(ns, i);
+                await buyMaxLevel(ns, i);
                 stats = ns.hacknet.getNodeStats(i);
                 atMaxLevel = stats!.level >= maxLevel;
             }
@@ -46,7 +46,7 @@ export async function main(ns: NS) {
             // Ram
             let atMaxRam: boolean = stats!.ram >= maxRam;
             if (!atMaxRam) {
-                buyMaxRam(ns, i);
+                await buyMaxRam(ns, i);
                 stats = ns.hacknet.getNodeStats(i);
                 atMaxRam = stats!.ram >= maxRam;
             }
@@ -54,15 +54,17 @@ export async function main(ns: NS) {
             // Core
             let atMaxCores: boolean = stats!.cores >= maxCores;
             if (!atMaxCores) {
-                buyMaxCores(ns, i);
+                await buyMaxCores(ns, i);
                 stats = ns.hacknet.getNodeStats(i);
                 atMaxCores = stats!.cores >= maxCores;
             }
 
             atMaxStats = atMaxStats && atMaxLevel && atMaxRam && atMaxCores;
+            await ns.sleep(1);
         }
 
         maxed = atMaxNodes && atMaxStats;
+        await ns.sleep(1);
     }
 
     ns.print("All nodes purchased and fully upgraded");
@@ -96,7 +98,7 @@ function buyNode(ns: NS) {
     return false;
 }
 
-function buyMaxNodes(ns: NS) {
+async function buyMaxNodes(ns: NS) {
     let purchaseCount: number = 0;
     let continuePurchasing: boolean = true;
     let atMax: boolean = isAtMaxNodes(ns);
@@ -113,13 +115,14 @@ function buyMaxNodes(ns: NS) {
             ns.print("Node purchase failure");
         }
         continuePurchasing = success && !atMax;
+        await ns.sleep(1);
     }
 
     ns.print(`Bought ${purchaseCount} nodes`);
     return;
 }
 
-function buyMaxLevel(ns: NS, i: number) {
+async function buyMaxLevel(ns: NS, i: number) {
     let money: number = getMoney(ns);
     let numToBuy: number = 0;
     let continueCounting: boolean = true;
@@ -134,6 +137,7 @@ function buyMaxLevel(ns: NS, i: number) {
         else {
             continueCounting = false;
         }
+        await ns.sleep(1);
     }
 
     var success: boolean = ns.hacknet.upgradeLevel(i, numToBuy);
@@ -143,7 +147,7 @@ function buyMaxLevel(ns: NS, i: number) {
     return;
 }
 
-function buyMaxRam(ns: NS, i: number) {
+async function buyMaxRam(ns: NS, i: number) {
     let money: number = getMoney(ns);
     let numToBuy: number = 0;
     let continueCounting: boolean = true;
@@ -158,6 +162,7 @@ function buyMaxRam(ns: NS, i: number) {
         else {
             continueCounting = false;
         }
+        await ns.sleep(1);
     }
 
     var success: boolean = ns.hacknet.upgradeRam(i, numToBuy);
@@ -167,7 +172,7 @@ function buyMaxRam(ns: NS, i: number) {
     return;
 }
 
-function buyMaxCores(ns: NS, i: number) {
+async function buyMaxCores(ns: NS, i: number) {
     let money: number = getMoney(ns);
     let numToBuy: number = 0;
     let continueCounting: boolean = true;
@@ -182,6 +187,7 @@ function buyMaxCores(ns: NS, i: number) {
         else {
             continueCounting = false;
         }
+        await ns.sleep(1);
     }
 
     var success: boolean = ns.hacknet.upgradeCore(i, numToBuy);
