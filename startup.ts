@@ -22,18 +22,18 @@ export async function main(ns: NS) {
     while (serversToHack.length > 0) {
         var server = serversToHack.shift();
 
-        while (countPortHackers(ns) < server.portsRequired) {
+        while (countPortHackers(ns) < server!.portsRequired) {
             ns.print("");
             ns.print(`Waiting for ${nextPortHackerToUnlock(ns)} unlock...`);
             await ns.sleep(60000);
         }
 
-        if (lastPortRequirement < server.portsRequired) {
+        if (lastPortRequirement < server!.portsRequired) {
             ns.print("");
             ns.print(`Taking over ${++lastPortRequirement}-port servers...`);
         }
 
-        takeover(ns, server);
+        takeover(ns, server!);
 
         await ns.sleep(1);
     }
