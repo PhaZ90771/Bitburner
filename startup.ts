@@ -159,25 +159,32 @@ async function homeStartup(ns: NS): Promise<void> {
     if (ns.isRunning(pservAutobuyScript, home)) {
         ns.kill(pservAutobuyScript, home);
     }
-    ns.run(pservAutobuyScript);
-    ns.print("Autobuy pserv setup success");
-
     if(ns.isRunning(hacknetAutobuyScript, home)) {
         ns.kill(hacknetAutobuyScript, home);
     }
+    if(ns.isRunning(autohackScript, home)) {
+        ns.kill(autohackScript, home);
+    }
+
+    while (ns.ps(home).length > 1) {
+        await ns.sleep(1000);
+    }
+
+    ns.run(pservAutobuyScript);
+    ns.print("Autobuy pserv setup success");
+    
     ns.run(hacknetAutobuyScript);
     ns.print("Autobuy nodes setup success");
 
-    await ns.sleep(1000);;
+    while (ns.ps(home).length < 3) {
+        await ns.sleep(1000);
+    }
 
     let ram: Array<number> = ns.getServerRam(home);
     let ramFree: number = ram[0] - ram[1] - homeRamSetAside;
     let needed: number = ns.getScriptRam(autohackScript);
     let threads: number = ramFree / needed;
-
-    if(ns.isRunning(autohackScript, home)) {
-        ns.kill(autohackScript, home);
-    }
+    
     ns.run(autohackScript, threads, autohackTarget);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
