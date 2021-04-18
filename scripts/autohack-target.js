@@ -4,14 +4,14 @@ export async function main(ns) {
     var securityThresh = ns.getServerMinSecurityLevel(target) + 5;
     while (true) {
         if (ns.getServerSecurityLevel(target) > securityThresh) {
-            ns.weaken(target);
+            await ns.weaken(target);
         }
         else if (ns.getServerMoneyAvailable(target) < moneyThresh) {
-            ns.grow(target);
+            await ns.grow(target);
         }
         else {
-            ns.hack(target);
+            await ns.hack(target);
         }
-        ns.sleep(1);
+        await ns.sleep(1);
     }
 }
