@@ -1,8 +1,8 @@
 import { getServerPrefix as prefix } from "/scripts/import.js";
 import { getMoney } from "/scripts/utilities.js";
-let ram = 8;
-let target = "foodnstuff";
-let script = "/scripts/autohack-target.js";
+const ram = 8;
+const target = "foodnstuff";
+const script = "/scripts/autohack-target.js";
 export async function main(ns) {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
