@@ -1,10 +1,10 @@
-import {BitBurner as NS} from "Bitburner"
+import {BitBurner as NS, Host, Script} from "Bitburner"
 import {getServerPrefix as prefix} from "/scripts/import.js"
 import {getMoney} from "/scripts/utilities.js"
 
 const ram: number = 8;
-const target: string = "foodnstuff";
-const script: string = "/scripts/autohack-target.js";
+const target: Host = "foodnstuff";
+const script: Script = "/scripts/autohack-target.js";
 
 export async function main(ns: NS): Promise<void> {
     ns.disableLog("getServerMoneyAvailable");
@@ -12,7 +12,7 @@ export async function main(ns: NS): Promise<void> {
 
     let serverLimit: number = ns.getPurchasedServerLimit();
 
-    let servers: Array<string> = ns.getPurchasedServers();
+    let servers: Array<Host> = ns.getPurchasedServers();
     let nextServerCost: number = ns.getPurchasedServerCost(ram);
 
     for (let i: number = 0; i < servers.length; i++) {
@@ -23,7 +23,7 @@ export async function main(ns: NS): Promise<void> {
         let money: number = getMoney(ns);
 
         if (money <= nextServerCost) {
-            let server: string = ns.purchaseServer(`${prefix()}-${servers.length}`, ram);
+            let server: Host = ns.purchaseServer(`${prefix()}-${servers.length}`, ram);
             servers = ns.getPurchasedServers();
             nextServerCost = ns.getPurchasedServerCost(ram);
             ns.print(`New server purchased: ${server}`);
@@ -38,7 +38,7 @@ export async function main(ns: NS): Promise<void> {
     }
 }
 
-function setup(ns: NS, server: string): void {
+function setup(ns: NS, server: Host): void {
     ns.killall(server);
     ns.scp(script, server);
     ns.exec(script, server, 3, target);

@@ -1,4 +1,4 @@
-import {BitBurner as NS} from "Bitburner"
+import {BitBurner as NS, CodingContractTypes, Host} from "Bitburner"
 
 export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");
@@ -10,8 +10,8 @@ export function getServers(ns: NS): Array<Server> {
     return servers;
 }
 
-export function getSolvableContractTypes(): Array<string> {
-    let solvableContractTypes: Array<string> = [
+export function getSolvableContractTypes(): Array<CodingContractTypes> {
+    let solvableContractTypes: Array<CodingContractTypes> = [
         "Array Jumping Game",
         "Minimum Path Sum in a Triangle",
         "Spiralize Matrix",
@@ -42,13 +42,15 @@ function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
 }
 
 export type Server = {
-    hostname: string,
+    hostname: Host,
     portsRequired: number,
     rooted: Function,
     ram: number,
     ramFree: Function,
     ramUsed: Function,
 }
+
+// export type Contract
 
 let hostnames: Array<string> = [
     "foodnstuff",

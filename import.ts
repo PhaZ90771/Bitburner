@@ -1,4 +1,4 @@
-import {BitBurner as NS} from "Bitburner"
+import {BitBurner as NS, Script} from "Bitburner"
 
 let config: Config = {
     folder: "scripts",
@@ -6,9 +6,9 @@ let config: Config = {
     serverPrefix: "PhaZ",
 }
 
-let importFilename: string = "import.js";
+let importFilename: Script = "import.js";
 
-let filenames: Array<string> = [
+let filenames: Array<Script> = [
     "autohack-target.js",
     "purchase-hacknet-node.js",
     "purchase-server-8gb.js",

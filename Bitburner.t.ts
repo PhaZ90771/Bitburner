@@ -63,15 +63,15 @@ declare module "Bitburner" {
         | "Ishima"
         | "Volhaven";
     export type PurchaseableProgram =
-        | "brutessh.exe"
-        | "ftpcrack.exe"
-        | "relaysmtp.exe"
-        | "httpworm.exe"
-        | "sqlinject.exe"
-        | "deepscanv1.exe"
-        | "deepscanv2.exe"
-        | "autolink.exe";
-    export type CreatableProgram = PurchaseableProgram | "serverprofiler.exe";
+        | "BruteSSH.exe"
+        | "FTPCrack.exe"
+        | "relaySMTP.exe"
+        | "HTTPWorm.exe"
+        | "SQLInject.exe"
+        | "DeepscanV1.exe"
+        | "DeepscanV2.exe"
+        | "AutoLink.exe";
+    export type CreatableProgram = PurchaseableProgram | "ServerProfiler.exe";
     export type CompanyName =
         // Sector-12
         | "MegaCorp"

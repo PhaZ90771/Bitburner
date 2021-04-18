@@ -55,16 +55,27 @@ function countPortHackers(ns) {
     return count;
 }
 function nextPortHackerToUnlock(ns) {
-    if (ns.fileExists("BruteSSH.exe"))
-        return "BruteSSH.exe";
-    if (ns.fileExists("FTPCrack.exe"))
-        return "FTPCrack.exe";
-    if (ns.fileExists("relaySMTP.exe"))
-        return "relaySMTP.exe";
-    if (ns.fileExists("HTTPWorm.exe"))
-        return "HTTPWorm.exe";
-    if (ns.fileExists("SQLInject.exe"))
-        return "SQLInject.exe";
+    let portHacker;
+    if (ns.fileExists("BruteSSH.exe")) {
+        portHacker = "BruteSSH.exe";
+        return portHacker.toString();
+    }
+    if (ns.fileExists("FTPCrack.exe")) {
+        portHacker = "FTPCrack.exe";
+        return portHacker.toString();
+    }
+    if (ns.fileExists("relaySMTP.exe")) {
+        portHacker = "relaySMTP.exe";
+        return portHacker.toString();
+    }
+    if (ns.fileExists("HTTPWorm.exe")) {
+        portHacker = "HTTPWorm.exe";
+        return portHacker.toString();
+    }
+    if (ns.fileExists("SQLInject.exe")) {
+        portHacker = "SQLInject.exe";
+        return portHacker.toString();
+    }
     return "None";
 }
 function takeover(ns, server) {

@@ -1,11 +1,11 @@
-import {BitBurner as NS} from "Bitburner"
+import {BitBurner as NS, Host, PurchaseableProgram, Script} from "Bitburner"
 import {getServers, Server} from "/scripts/utilities.js"
 
-const home: string = "home";
-const autohackTarget: string = "foodnstuff";
-const autohackScript: string = "/scripts/autohack-target.js";
-const pservAutobuyScript: string = "/scripts/purchase-server-8gb.js";
-const hacknetAutobuyScript: string = "/scripts/purchase-hacknet-node.js";
+const home: Host = "home";
+const autohackTarget: Host = "foodnstuff";
+const autohackScript: Script = "/scripts/autohack-target.js";
+const pservAutobuyScript: Script = "/scripts/purchase-server-8gb.js";
+const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 
 export async function main(ns: NS): Promise<void> {
     disableLogs(ns);
@@ -63,11 +63,12 @@ function countPortHackers(ns: NS): number {
 }
 
 function nextPortHackerToUnlock(ns: NS): string {
-    if(ns.fileExists("BruteSSH.exe")) return "BruteSSH.exe";
-    if(ns.fileExists("FTPCrack.exe")) return "FTPCrack.exe";
-    if(ns.fileExists("relaySMTP.exe")) return "relaySMTP.exe";
-    if(ns.fileExists("HTTPWorm.exe")) return "HTTPWorm.exe";
-    if(ns.fileExists("SQLInject.exe")) return "SQLInject.exe";
+    let portHacker: PurchaseableProgram;
+    if(ns.fileExists("BruteSSH.exe")) { portHacker = "BruteSSH.exe"; return portHacker.toString(); }
+    if(ns.fileExists("FTPCrack.exe")) { portHacker = "FTPCrack.exe"; return portHacker.toString(); }
+    if(ns.fileExists("relaySMTP.exe")) { portHacker = "relaySMTP.exe"; return portHacker.toString(); }
+    if(ns.fileExists("HTTPWorm.exe")) { portHacker = "HTTPWorm.exe"; return portHacker.toString(); }
+    if(ns.fileExists("SQLInject.exe")) { portHacker = "SQLInject.exe"; return portHacker.toString(); }
     return "None";
 }
 

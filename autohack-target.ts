@@ -1,7 +1,7 @@
-import {BitBurner as NS} from "Bitburner"
+import {BitBurner as NS, Host} from "Bitburner"
 
 export async function main(ns: NS): Promise<void> {
-    var target: string = ns.args[0];
+    var target: Host = ns.args[0];
     var moneyThresh: number = ns.getServerMaxMoney(target) * 0.75;
     var securityThresh: number = ns.getServerMinSecurityLevel(target) + 5;
     
