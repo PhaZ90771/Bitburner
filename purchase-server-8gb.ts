@@ -2,6 +2,7 @@
 import {BitBurner as NS} from "BitBurner"
 
 import {getServerPrefix as prefix} from "import.js"
+import {getMoney} from "utilities.js"
 
 let ram = 8;
 let target = "foodnstuff";
@@ -37,10 +38,6 @@ export async function main(ns: NS) {
         }
         ns.sleep(1);
     }
-}
-
-function getMoney(ns) {
-    return ns.getServerMoneyAvailable("home");
 }
 
 function setup(ns, server) {

@@ -1,4 +1,5 @@
 import { getServerPrefix as prefix } from "import.js";
+import { getMoney } from "utilities.js";
 let ram = 8;
 let target = "foodnstuff";
 let script = "/scripts/autohack-target.js";
@@ -27,9 +28,6 @@ export async function main(ns) {
         }
         ns.sleep(1);
     }
-}
-function getMoney(ns) {
-    return ns.getServerMoneyAvailable("home");
 }
 function setup(ns, server) {
     ns.killall(server);
