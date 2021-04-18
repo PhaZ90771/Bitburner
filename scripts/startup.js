@@ -30,6 +30,10 @@ export async function main(ns) {
 function getArgs(ns) {
     if (ns.args.length > 0 && typeof ns.args[0] === "number" && ns.args[0] >= 0) {
         homeRamSetAside = ns.args[0];
+        ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
+    }
+    else {
+        ns.tprint(`Setting aside at least ${homeRamSetAside}GB [default] of ram on home system`);
     }
 }
 function disableLogs(ns) {
