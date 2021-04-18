@@ -17,7 +17,7 @@ export async function main(ns) {
     if (!secondStage) {
         let fileImported = await importImport(ns);
         if (fileImported) {
-            ns.spawn(importFilename, 1, true);
+            ns.run(`/${config.folder}/${importFilename}`, 1, true);
         }
         else {
             ns.tprint("Download failed!");
