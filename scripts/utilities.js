@@ -6,7 +6,7 @@ export function getServers(ns) {
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
 }
-export function getSolvableContractTypes() {
+export function getSolvableCodingContractTypes() {
     let solvableContractTypes = [
         "Array Jumping Game",
         "Minimum Path Sum in a Triangle",
@@ -15,6 +15,24 @@ export function getSolvableContractTypes() {
         "Unique Paths in a Grid II",
     ];
     return solvableContractTypes;
+}
+export function getCodingContract(ns, filename, hostname) {
+    let contract = {
+        hostname: hostname,
+        filename: filename,
+        type: ns.codingcontract.getContractType(filename, hostname),
+        description: ns.codingcontract.getDescription(filename, hostname),
+        data: ns.codingcontract.getData(filename, hostname),
+        numTries: function (ns) {
+            return ns.codingcontract.getNumTriesRemaining(filename, hostname);
+        },
+        attempt: function (ns, answer) {
+            this.solved = ns.codingcontract.attempt(answer, filename, hostname);
+            return this.solved;
+        },
+        solved: false,
+    };
+    return contract;
 }
 function addServer(ns, servers, hostname) {
     if (ns.serverExists(hostname)) {
