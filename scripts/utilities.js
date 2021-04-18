@@ -6,7 +6,7 @@ export function getMoney(ns) {
     return ns.getServerMoneyAvailable("home");
 }
 export function getServers(ns) {
-    let servers = new Map();
+    let servers = [];
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
 }
@@ -18,8 +18,15 @@ function addServer(ns, servers, hostname) {
             rooted: function (ns) {
                 return ns.hasRootAccess(hostname);
             },
+            ram: ns.getServerRam(hostname)[0],
+            ramFree: function (ns) {
+                return this.ram - ns.getServerRam(hostname)[1];
+            },
+            ramUsed: function (ns) {
+                return ns.getServerRam(hostname)[1];
+            },
         };
-        servers.set(hostname, server);
+        servers.push(server);
     }
 }
 let hostnames = [

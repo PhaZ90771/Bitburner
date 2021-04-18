@@ -11,12 +11,12 @@ export function getMoney(ns: NS) {
 }
 
 export function getServers(ns: NS) {
-    let servers: Map<string, Server> = new Map<string, Server>();
+    let servers: Array<Server> = [];
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
 }
 
-function addServer(ns: NS, servers: Map<string, Server>, hostname: string) {
+function addServer(ns: NS, servers: Array<Server>, hostname: string) {
     if (ns.serverExists(hostname)) {
         let server: Server = {
             hostname: hostname,
@@ -24,8 +24,15 @@ function addServer(ns: NS, servers: Map<string, Server>, hostname: string) {
             rooted: function(ns: NS): boolean {
                 return ns.hasRootAccess(hostname);
             },
+            ram: ns.getServerRam(hostname)[0],
+            ramFree: function(ns: NS): number {
+                return this.ram - ns.getServerRam(hostname)[1];
+            },
+            ramUsed: function(ns: NS): number {
+                return ns.getServerRam(hostname)[1];
+            },
         }
-        servers.set(hostname, server);
+        servers.push(server);
     }
 }
 
@@ -33,6 +40,9 @@ type Server = {
     hostname: string,
     portsRequired: number,
     rooted: Function,
+    ram: number,
+    ramFree: Function,
+    ramUsed: Function,
 }
 
 let hostnames: Array<string> = [
