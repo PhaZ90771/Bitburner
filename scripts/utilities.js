@@ -1,7 +1,3 @@
-export function GetServers(ns) {
-    var servers = ns.scan("home");
-    ns.tprint(servers);
-}
 export function getMoney(ns) {
     return ns.getServerMoneyAvailable("home");
 }
@@ -9,6 +5,16 @@ export function getServers(ns) {
     let servers = [];
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
+}
+export function getSolvableContractTypes() {
+    let solvableContractTypes = [
+        "Array Jumping Game",
+        "Minimum Path Sum in a Triangle",
+        "Spiralize Matrix",
+        "Subarray with Maximum Sum",
+        "Unique Paths in a Grid II",
+    ];
+    return solvableContractTypes;
 }
 function addServer(ns, servers, hostname) {
     if (ns.serverExists(hostname)) {

@@ -1,22 +1,28 @@
 // @ts-ignore 
 import {BitBurner as NS} from "BitBurner"
 
-export function GetServers(ns: NS) {
-    var servers: Array<string> = ns.scan("home");
-    ns.tprint(servers);
-}
-
-export function getMoney(ns: NS) {
+export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");
 }
 
-export function getServers(ns: NS) {
+export function getServers(ns: NS): Array<Server> {
     let servers: Array<Server> = [];
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
 }
 
-function addServer(ns: NS, servers: Array<Server>, hostname: string) {
+export function getSolvableContractTypes(): Array<string> {
+    let solvableContractTypes: Array<string> = [
+        "Array Jumping Game",
+        "Minimum Path Sum in a Triangle",
+        "Spiralize Matrix",
+        "Subarray with Maximum Sum",
+        "Unique Paths in a Grid II",
+    ];
+    return solvableContractTypes;
+}
+
+function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
     if (ns.serverExists(hostname)) {
         let server: Server = {
             hostname: hostname,
