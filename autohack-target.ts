@@ -2,9 +2,9 @@
 import {BitBurner as NS} from "BitBurner"
 
 export async function main(ns: NS) {
-    var target = ns.args[0];
-    var moneyThresh = ns.getServerMaxMoney(target) * 0.75;
-    var securityThresh = ns.getServerMinSecurityLevel(target) + 5;
+    var target: string = ns.args[0];
+    var moneyThresh: number = ns.getServerMaxMoney(target) * 0.75;
+    var securityThresh: number = ns.getServerMinSecurityLevel(target) + 5;
     
     while(true) {
         if (ns.getServerSecurityLevel(target) > securityThresh) {
