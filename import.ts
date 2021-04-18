@@ -19,7 +19,9 @@ export async function main(ns: NS) {
 
 async function importFiles(ns: NS) {
     let files = [
-        "utilities.js"
+        "autohack-target.js",
+        "import.js",
+        "utilities.js",
     ];
     let filesImported = true;
 
