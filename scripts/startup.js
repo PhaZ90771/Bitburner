@@ -4,7 +4,6 @@ const autohackTarget = "foodnstuff";
 const autohackScript = "/scripts/autohack-target.js";
 const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
-const downloadLitFilesScript = "/scripts/download-lit-files.script";
 export async function main(ns) {
     disableLogs(ns);
     await homeStartup(ns);

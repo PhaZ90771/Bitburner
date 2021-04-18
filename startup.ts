@@ -8,7 +8,6 @@ const autohackTarget: string = "foodnstuff";
 const autohackScript: string = "/scripts/autohack-target.js";
 const pservAutobuyScript: string = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript: string = "/scripts/purchase-hacknet-node.js";
-const downloadLitFilesScript: string = "/scripts/download-lit-files.script";
 
 export async function main(ns: NS) {
     disableLogs(ns);
