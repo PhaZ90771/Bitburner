@@ -42,7 +42,7 @@ function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
     }
 }
 
-type Server = {
+export type Server = {
     hostname: string,
     portsRequired: number,
     rooted: Function,
