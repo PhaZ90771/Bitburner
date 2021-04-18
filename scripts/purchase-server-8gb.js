@@ -1,5 +1,5 @@
-import { getServerPrefix as prefix } from "import.js";
-import { getMoney } from "utilities.js";
+import { getServerPrefix as prefix } from "/scripts/import.js";
+import { getMoney } from "/scripts/utilities.js";
 let ram = 8;
 let target = "foodnstuff";
 let script = "/scripts/autohack-target.js";
@@ -20,7 +20,6 @@ export async function main(ns) {
             nextServerCost = ns.getPurchasedServerCost(ram);
             ns.print(`New server purchased: ${server}`);
             setup(ns, server);
-            ;
         }
         else {
             let need = nextServerCost - money;
