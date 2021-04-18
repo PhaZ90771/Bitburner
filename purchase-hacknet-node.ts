@@ -13,6 +13,9 @@ let nextNodeCost: number;
 let nodeCount: number;
 
 export async function main(ns: NS) {
+    ns.disableLog("getServerMoneyAvailable");
+    ns.disableLog("sleep");
+
     let maxed: boolean = false;
     let atMaxNodes: boolean = false;
 
@@ -30,7 +33,7 @@ export async function main(ns: NS) {
         }
 
         ns.print(`Looking through ${nodeCount} nodes`);
-        var atMaxStats = true;
+        let atMaxStats: boolean = true;
         for (let i: number = 0; i < nodeCount; i++) {
             ns.print(`Looking at hacknet-node-${i}`);
             var stats: NodeStats = ns.hacknet.getNodeStats(i);
@@ -85,7 +88,6 @@ function isAtMaxNodes(ns: NS) {
 function buyNode(ns: NS) {
     let money: number = getMoney(ns);
 
-    ns.print(`Money: $${money}; Cost: $${nextNodeCost}`);
     if (nextNodeCost <= money) {
         ns.print("Attempting node purchase");
         let success: boolean = ns.hacknet.purchaseNode() != -1;
