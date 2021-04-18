@@ -167,7 +167,7 @@ async function homeStartup(ns: NS) {
     if(ns.isRunning(autohackScript, home)) {
         ns.kill(autohackScript, home);
     }
-    ns.run(autohackScript);
+    ns.run(autohackScript, threads, autohackTarget);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }
