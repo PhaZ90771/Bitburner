@@ -22,7 +22,7 @@
       "strictNullChecks": true,
       "sourceMap": false,
       "paths": {
-        "/*": ["./*"]
+        "/scripts/*": ["./*"],
       }
     }
 }
