@@ -58,7 +58,7 @@ function isAtMaxNodes(ns) {
     return nodeCount >= maxNodes;
 }
 function buyNode(ns) {
-    let money = getMoney();
+    let money = getMoney(ns);
     ns.print(`Money: $${money}; Cost: $${nextNodeCost}`);
     if (nextNodeCost <= money) {
         ns.print("Attempting node purchase");
@@ -92,7 +92,7 @@ function buyMaxNodes(ns) {
     return;
 }
 function buyMaxLevel(ns, i) {
-    let money = getMoney();
+    let money = getMoney(ns);
     let numToBuy = 0;
     let continueCounting = true;
     while (continueCounting) {
@@ -114,7 +114,7 @@ function buyMaxLevel(ns, i) {
     return;
 }
 function buyMaxRam(ns, i) {
-    let money = getMoney();
+    let money = getMoney(ns);
     let numToBuy = 0;
     let continueCounting = true;
     while (continueCounting) {
@@ -136,7 +136,7 @@ function buyMaxRam(ns, i) {
     return;
 }
 function buyMaxCores(ns, i) {
-    let money = getMoney();
+    let money = getMoney(ns);
     let numToBuy = 0;
     let continueCounting = true;
     while (continueCounting) {
