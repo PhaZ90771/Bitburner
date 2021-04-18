@@ -49,7 +49,7 @@ export async function main(ns) {
     ns.print("All nodes purchased and fully upgraded");
 }
 function updateNextNodeCost(ns) {
-    nextNodeCost = ns.hacknet.getPurchaseNodesCost();
+    nextNodeCost = ns.hacknet.getPurchaseNodeCost();
 }
 function updateNodeCount(ns) {
     nodeCount = ns.hacknet.numNodes();

@@ -69,7 +69,7 @@ export async function main(ns: NS) {
 }
 
 function updateNextNodeCost(ns: NS) {
-    nextNodeCost = ns.hacknet.getPurchaseNodesCost();
+    nextNodeCost = ns.hacknet.getPurchaseNodeCost();
 }
 
 function updateNodeCount(ns: NS) {
