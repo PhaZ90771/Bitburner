@@ -40,7 +40,7 @@ export async function main(ns: NS) {
     }
 }
 
-function setup(ns, server) {
+function setup(ns: NS, server) {
     ns.killall(server);
     ns.scp(script, server);
     ns.exec(script, server, 3, target);
