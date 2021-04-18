@@ -36,7 +36,7 @@ export async function main(ns: NS) {
             let need = nextServerCost - money;
             ns.print(`Need $${need} for next server`);
         }
-        ns.sleep(1);
+        await ns.sleep(1);
     }
 }
 
