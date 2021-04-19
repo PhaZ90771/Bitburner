@@ -25,13 +25,20 @@ export async function main(ns: NS): Promise<void> {
 
         if (money <= nextServerCost) {
             let hostname: Host = ns.purchaseServer(`${prefix()}-${purchasedServerHostnames.length}`, ram);
-            purchasedServerHostnames = ns.getPurchasedServers();
-            nextServerCost = ns.getPurchasedServerCost(ram);
+            if (hostname !== "") {
+                purchasedServerHostnames = ns.getPurchasedServers();
+                nextServerCost = ns.getPurchasedServerCost(ram);
 
-            let server: Server = getServer(ns, hostname);
-            ns.print(`New server purchased: ${server.hostname}`);
+                let server: Server = getServer(ns, hostname);
+                ns.print(`New server purchased: ${server.hostname}`);
 
-            setup(ns, server);
+                setup(ns, server);
+            }
+            else {
+                money = getMoney(ns);
+                let need: number = nextServerCost - money;
+                ns.print(`Need $${need} for next server`);
+            }
         }
         else {
             let need: number = nextServerCost - money;
