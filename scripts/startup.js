@@ -8,6 +8,7 @@ let homeRamSetAside = 100;
 export async function main(ns) {
     if (ns.ps(home).length > 1) {
         ns.spawn(ns.getScriptName(), 1, ns.args);
+        ns.killall(home);
         ns.exit();
     }
     disableLogs(ns);
