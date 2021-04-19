@@ -1,4 +1,4 @@
-import {BitBurner as NS, Host, PurchaseableProgram, Script} from "Bitburner"
+import {BitBurner as NS, Host, ProcessInfo, PurchaseableProgram, Script} from "Bitburner"
 import {getServers, Server} from "/scripts/utilities.js"
 
 const home: Host = "home";
@@ -10,6 +10,11 @@ const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside: number = 100;
 
 export async function main(ns: NS): Promise<void> {
+    if (ns.ps(home).length > 1) {
+        ns.spawn(ns.getScriptName(), 1, ns.args);
+        ns.exit();
+    }
+
     disableLogs(ns);
     getArgs(ns);
 
@@ -156,18 +161,8 @@ async function homeStartup(ns: NS): Promise<void> {
     ns.print("");
     ns.print("Home Setup:");
 
-    if (ns.isRunning(pservAutobuyScript, home)) {
-        ns.kill(pservAutobuyScript, home);
-    }
-    if(ns.isRunning(hacknetAutobuyScript, home)) {
-        ns.kill(hacknetAutobuyScript, home);
-    }
-    if(ns.isRunning(autohackScript, home)) {
-        ns.kill(autohackScript, home);
-    }
-
-    while (ns.ps(home).length > 1) {
-        await ns.sleep(1000);
+    if (ns.ps(home).length > 1) {
+        ns.exit();
     }
 
     ns.run(pservAutobuyScript);
@@ -176,7 +171,7 @@ async function homeStartup(ns: NS): Promise<void> {
     ns.run(hacknetAutobuyScript);
     ns.print("Autobuy nodes setup success");
 
-    while (ns.ps(home).length < 3) {
+    while (ns.ps(home).length < 3   ) {
         await ns.sleep(1000);
     }
 

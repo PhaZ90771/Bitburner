@@ -6,6 +6,10 @@ const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside = 100;
 export async function main(ns) {
+    if (ns.ps(home).length > 1) {
+        ns.spawn(ns.getScriptName(), 1, ns.args);
+        ns.exit();
+    }
     disableLogs(ns);
     getArgs(ns);
     await homeStartup(ns);
@@ -153,17 +157,8 @@ function setup(ns, server) {
 async function homeStartup(ns) {
     ns.print("");
     ns.print("Home Setup:");
-    if (ns.isRunning(pservAutobuyScript, home)) {
-        ns.kill(pservAutobuyScript, home);
-    }
-    if (ns.isRunning(hacknetAutobuyScript, home)) {
-        ns.kill(hacknetAutobuyScript, home);
-    }
-    if (ns.isRunning(autohackScript, home)) {
-        ns.kill(autohackScript, home);
-    }
-    while (ns.ps(home).length > 1) {
-        await ns.sleep(1000);
+    if (ns.ps(home).length > 1) {
+        ns.exit();
     }
     ns.run(pservAutobuyScript);
     ns.print("Autobuy pserv setup success");
