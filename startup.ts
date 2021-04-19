@@ -10,7 +10,7 @@ const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside: number = 100;
 
 export async function main(ns: NS): Promise<void> {
-    killAllOther(ns);
+    await killAllOther(ns);
 
     disableLogs(ns);
     getArgs(ns);
@@ -190,7 +190,14 @@ async function killAllOther(ns: NS) {
     }
     let ps: Array<ProcessInfo> = ns.ps(home);
 
-    ps.filter(p => !isSamePS(thisPS, p)).forEach(p => ns.kill(p.filename, home, p.args));
+    let psToKill = ps.filter(p => !isSamePS(thisPS, p));
+    ns.print(`${psToKill.length} other processes found`);
+    psToKill.forEach(p => ns.kill(p.filename, home, p.args));
+
+    while(ns.ps(home).length > 1) {
+        await ns.sleep(1000);
+    }
+    ns.print("Other processes killed, proceeding");
 }
 
 async function isSamePS(p1: ProcessInfo, p2: ProcessInfo) {

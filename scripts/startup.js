@@ -6,7 +6,7 @@ const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside = 100;
 export async function main(ns) {
-    killAllOther(ns);
+    await killAllOther(ns);
     disableLogs(ns);
     getArgs(ns);
     await homeStartup(ns);
@@ -179,7 +179,13 @@ async function killAllOther(ns) {
         args: ns.args,
     };
     let ps = ns.ps(home);
-    ps.filter(p => !isSamePS(thisPS, p)).forEach(p => ns.kill(p.filename, home, p.args));
+    let psToKill = ps.filter(p => !isSamePS(thisPS, p));
+    ns.print(`${psToKill.length} other processes found`);
+    psToKill.forEach(p => ns.kill(p.filename, home, p.args));
+    while (ns.ps(home).length > 1) {
+        await ns.sleep(1000);
+    }
+    ns.print("Other processes killed, proceeding");
 }
 async function isSamePS(p1, p2) {
     return p1.filename === p2.filename && isSameArgs(p1.args, p2.args);
