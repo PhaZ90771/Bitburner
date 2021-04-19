@@ -442,7 +442,7 @@ declare module "Bitburner" {
         /** Number of threads script is running with */
         threads: number;
         /** Script's arguments */
-        args: string[];
+        args: any[];
     }
 
     export interface HackingMultipliers {
@@ -3462,7 +3462,7 @@ declare module "Bitburner" {
          * @ramCost 0 GB
          * @param {string} [fn] Optional. Filename of script to get logs from.
          * @param {string} [ip] Optional. IP or hostname of the server that the script is on.
-         * @param {...string} [args] Arguments to identify which scripts to get logs for.
+         * @param {...any} [args] Arguments to identify which scripts to get logs for.
          * @returns {string[]} Returns an string array, where each line is an element in the array. The most recently logged line is at the end of the array.
          */
         getScriptLogs (fn?: Script, ip?: Host, ...args: any[]): string[];
@@ -3612,7 +3612,7 @@ declare module "Bitburner" {
          * @ramCost 1 GB
          * @param {string} script Filename of script to run.
          * @param {number} [numThreads] Optional thread count for new script. Set to 1 by default. Will be rounded to nearest integer.
-         * @param {...string} [args] Additional arguments to pass into the new script that is being run. Note that if any arguments are being passed into the new script, then the second argument numThreads must be filled in with a value.
+         * @param {...any} [args] Additional arguments to pass into the new script that is being run. Note that if any arguments are being passed into the new script, then the second argument numThreads must be filled in with a value.
          * @returns {number} Returns the PID of a successfully started script, and 0 otherwise.
          */
         run (
@@ -3653,14 +3653,14 @@ declare module "Bitburner" {
          * @param {string} script Filename of script to execute.
          * @param {string} host IP or hostname of the `target server` on which to execute the script.
          * @param {number} [numThreads] Optional thread count for new script. Set to 1 by default. Will be rounded to nearest integer.
-         * @param {...string} [args] Additional arguments to pass into the new script that is being run. Note that if any arguments are being passed into the new script, then the third argument numThreads must be filled in with a value.
+         * @param {...any} [args] Additional arguments to pass into the new script that is being run. Note that if any arguments are being passed into the new script, then the third argument numThreads must be filled in with a value.
          * @returns {number} Returns the PID of a successfully started script, and 0 otherwise.
          */
         exec (
             script: Script,
             host: Host,
             numThreads?: number,
-            ...args: string[]
+            ...args: any[]
         ): number;
 
         /**
@@ -3679,9 +3679,9 @@ declare module "Bitburner" {
          * @ramCost 2 GB
          * @param {string} script Filename of script to execute.
          * @param {string} numThreads Number of threads to spawn new script with. Will be rounded to nearest integer.
-         * @param {...string} [args] Additional arguments to pass into the new script that is being run.
+         * @param {...any} [args] Additional arguments to pass into the new script that is being run.
          */
-        spawn (script: Script, numThreads?: number, ...args: string[]): void;
+        spawn (script: Script, numThreads?: number, ...args: any[]): void;
 
         /**
          * Kills the script on the target server specified by the script’s name and arguments.
@@ -3707,10 +3707,10 @@ declare module "Bitburner" {
          * @ramCost 0.5 GB
          * @param {string} script Filename of the script to kill
          * @param {string} host IP or hostname of the server on which to kill the script.
-         * @param {...string} [args] Arguments to identify which script to kill.
+         * @param {...any} [args] Arguments to identify which script to kill.
          * @returns {boolean} True if the script is successfully killed, and false otherwise.
          */
-        kill (script: Script, host: Host, ...args: string[]): boolean;
+        kill (script: Script, host: Host, ...args: any[]): boolean;
 
         /**
          * Kills the script with the specified PID.
@@ -4055,7 +4055,7 @@ declare module "Bitburner" {
          * @ramCost 0.1 GB
          * @param {string} script Filename of script to check. This is case-sensitive.
          * @param {string} host Host or IP of target server.
-         * @param {...string} [args] Arguments to specify/identify which scripts to search for.
+         * @param {...any} [args] Arguments to specify/identify which scripts to search for.
          * @returns {boolean} True if specified script is running on the target server, and false otherwise.
          */
         isRunning (script: Script, host: Host, ...args: string[]): boolean;
@@ -4356,10 +4356,10 @@ declare module "Bitburner" {
          * @ramCost 0.1 GB
          * @param {string} script Filename of script.
          * @param {string} host Server on which script is running.
-         * @param {string} [args] Arguments that the script is running with.
+         * @param {any} [args] Arguments that the script is running with.
          * @returns {(number|[number,number])} Amount of income the specified script generates while online.
          */
-        getScriptIncome (script: Script, host: Host, ...args: string[]): number | [number, number];
+        getScriptIncome (script: Script, host: Host, ...args: any[]): number | [number, number];
 
         /**
          * Returns the amount of hacking experience the specified script generates while online
@@ -4372,10 +4372,10 @@ declare module "Bitburner" {
          * @ramCost 0.1 GB
          * @param {string} script Filename of script.
          * @param {string} host Server on which script is running.
-         * @param {...string[]} [args] Arguments that the script is running with.
+         * @param {...any[]} [args] Arguments that the script is running with.
          * @returns {number} Amount of hacking experience the specified script generates while online.
          */
-        getScriptExpGain (script: Script, host: Host, ...args: string[]): number;
+        getScriptExpGain (script: Script, host: Host, ...args: any[]): number;
 
         /**
          * Returns the amount of time in milliseconds that have passed since you last installed Augmentations.
