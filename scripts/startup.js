@@ -67,23 +67,23 @@ function countPortHackers(ns) {
 }
 function nextPortHackerToUnlock(ns) {
     let portHacker;
-    if (ns.fileExists("BruteSSH.exe")) {
+    if (!ns.fileExists("BruteSSH.exe")) {
         portHacker = "BruteSSH.exe";
         return portHacker.toString();
     }
-    if (ns.fileExists("FTPCrack.exe")) {
+    if (!ns.fileExists("FTPCrack.exe")) {
         portHacker = "FTPCrack.exe";
         return portHacker.toString();
     }
-    if (ns.fileExists("relaySMTP.exe")) {
+    if (!ns.fileExists("relaySMTP.exe")) {
         portHacker = "relaySMTP.exe";
         return portHacker.toString();
     }
-    if (ns.fileExists("HTTPWorm.exe")) {
+    if (!ns.fileExists("HTTPWorm.exe")) {
         portHacker = "HTTPWorm.exe";
         return portHacker.toString();
     }
-    if (ns.fileExists("SQLInject.exe")) {
+    if (!ns.fileExists("SQLInject.exe")) {
         portHacker = "SQLInject.exe";
         return portHacker.toString();
     }
