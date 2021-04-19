@@ -27,8 +27,12 @@ export function getCodingContract(ns, filename, hostname) {
             return ns.codingcontract.getNumTriesRemaining(filename, hostname);
         },
         attempt: function (ns, answer) {
-            this.solved = ns.codingcontract.attempt(answer, filename, hostname);
-            return this.solved;
+            let rewardMessage = ns.codingcontract.attempt(answer, filename, hostname, { returnReward: true }).toString();
+            this.solved = rewardMessage !== "";
+            if (!this.solved) {
+                rewardMessage = "Wrong answer";
+            }
+            return rewardMessage;
         },
         solved: false,
     };

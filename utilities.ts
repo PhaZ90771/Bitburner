@@ -1,4 +1,4 @@
-import {BitBurner as NS, CodingContractTypes, Host, Script} from "Bitburner"
+import {BitBurner as NS, CodingContractTypes, CodingAttemptOptions, Host, Script} from "Bitburner"
 
 export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");
@@ -31,9 +31,13 @@ export function getCodingContract(ns: NS, filename: Script, hostname: Host): Cod
         numTries: function(ns: NS): number {
             return ns.codingcontract.getNumTriesRemaining(filename, hostname);
         },
-        attempt: function (ns:NS, answer: any): boolean {
-            this.solved = ns.codingcontract.attempt(answer, filename, hostname);
-            return this.solved;
+        attempt: function (ns:NS, answer: any): string {
+            let rewardMessage: string = ns.codingcontract.attempt(answer, filename, hostname, {returnReward: true}).toString();
+            this.solved = rewardMessage !== "";
+            if (!this.solved) {
+                rewardMessage = "Wrong answer"
+            }
+            return rewardMessage;
         },
         solved: false,
     };
