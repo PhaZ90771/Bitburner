@@ -4418,7 +4418,7 @@ declare module "Bitburner" {
          * @param {string} format Formatter.
          * @returns {string} Formated number.
          */
-        nFormat (n: number, format: string): number;
+        nFormat (n: number, format: string): string;
 
         /**
          * Prompts the player with a dialog box with two options: “Yes” and “No”.
