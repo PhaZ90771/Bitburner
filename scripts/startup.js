@@ -6,11 +6,7 @@ const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside = 100;
 export async function main(ns) {
-    if (ns.ps(home).length > 1) {
-        ns.spawn(ns.getScriptName(), 1, ns.args);
-        ns.killall(home);
-        ns.exit();
-    }
+    killAllOther(ns);
     disableLogs(ns);
     getArgs(ns);
     await homeStartup(ns);
@@ -175,4 +171,15 @@ async function homeStartup(ns) {
     ns.run(autohackScript, threads, autohackTarget);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
+}
+async function killAllOther(ns) {
+    let thisPS = {
+        filename: ns.getScriptName(),
+        threads: 1,
+        args: ns.args,
+    };
+    let ps = ns.ps(home);
+    ps.filter(p => !isSamePS(thisPS, p)).forEach(p => ns.kill(p.filename, home, p.args));
+}
+async function isSamePS(p1, p2) {
 }

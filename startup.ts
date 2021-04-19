@@ -10,11 +10,7 @@ const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside: number = 100;
 
 export async function main(ns: NS): Promise<void> {
-    if (ns.ps(home).length > 1) {
-        ns.spawn(ns.getScriptName(), 1, ns.args);
-        ns.killall(home);
-        ns.exit();
-    }
+    killAllOther(ns);
 
     disableLogs(ns);
     getArgs(ns);
@@ -184,4 +180,19 @@ async function homeStartup(ns: NS): Promise<void> {
     ns.run(autohackScript, threads, autohackTarget);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
+}
+
+async function killAllOther(ns: NS) {
+    let thisPS: ProcessInfo = {
+        filename: ns.getScriptName(),
+        threads: 1,
+        args: ns.args,
+    }
+    let ps: Array<ProcessInfo> = ns.ps(home);
+
+    ps.filter(p => !isSamePS(thisPS, p)).forEach(p => ns.kill(p.filename, home, p.args));
+}
+
+async function isSamePS(p1: ProcessInfo, p2: ProcessInfo) {
+
 }
