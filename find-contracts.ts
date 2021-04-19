@@ -4,7 +4,7 @@ import {getServers, Server, getSolvableCodingContractTypes, getCodingContract, C
 const cctFilter: string = ".cct";
 let numberToFind: number;
 
-export async function main(ns: NS) {
+export async function main(ns: NS): Promise<void> {
     getSearchLimit(ns);
     let found: number = 0;
     let servers: Array<Server> = getServers(ns);
