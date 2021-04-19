@@ -1,6 +1,6 @@
 import {BitBurner as NS, Host, Script} from "Bitburner"
 import {getServerPrefix as prefix} from "/scripts/import.js"
-import {getMoney} from "/scripts/utilities.js"
+import {getMoney, Server, getServer} from "/scripts/utilities.js"
 
 const ram: number = 8;
 const target: Host = "foodnstuff";
@@ -12,21 +12,24 @@ export async function main(ns: NS): Promise<void> {
 
     let serverLimit: number = ns.getPurchasedServerLimit();
 
-    let servers: Array<Host> = ns.getPurchasedServers();
+    let purchasedServerHostnames: Array<Host> = ns.getPurchasedServers();
     let nextServerCost: number = ns.getPurchasedServerCost(ram);
 
-    for (let i: number = 0; i < servers.length; i++) {
-        setup(ns, servers[i]);
+    for (let i: number = 0; i < purchasedServerHostnames.length; i++) {
+        let server: Server = getServer(ns, purchasedServerHostnames[i]);
+        setup(ns, server);
     }
 
-    while (servers.length < serverLimit) {
+    while (purchasedServerHostnames.length < serverLimit) {
         let money: number = getMoney(ns);
 
         if (money <= nextServerCost) {
-            let server: Host = ns.purchaseServer(`${prefix()}-${servers.length}`, ram);
-            servers = ns.getPurchasedServers();
+            let hostname: Host = ns.purchaseServer(`${prefix()}-${purchasedServerHostnames.length}`, ram);
+            purchasedServerHostnames = ns.getPurchasedServers();
             nextServerCost = ns.getPurchasedServerCost(ram);
-            ns.print(`New server purchased: ${server}`);
+
+            let server: Server = getServer(ns, hostname);
+            ns.print(`New server purchased: ${server.hostname}`);
 
             setup(ns, server);
         }
@@ -38,8 +41,8 @@ export async function main(ns: NS): Promise<void> {
     }
 }
 
-function setup(ns: NS, server: Host): void {
-    ns.killall(server);
-    ns.scp(script, server);
-    ns.exec(script, server, 3, target);
+function setup(ns: NS, server: Server): void {
+    ns.killall(server.hostname);
+    ns.scp(script, server.hostname);
+    ns.exec(script, server.hostname, 3, target);
 }

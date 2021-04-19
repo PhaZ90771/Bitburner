@@ -46,22 +46,27 @@ export function getCodingContract(ns: NS, filename: Script, hostname: Host): Cod
 
 function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
     if (ns.serverExists(hostname)) {
-        let server: Server = {
-            hostname: hostname,
-            portsRequired: ns.getServerNumPortsRequired(hostname),
-            rooted: function(ns: NS): boolean {
-                return ns.hasRootAccess(hostname);
-            },
-            ram: ns.getServerRam(hostname)[0],
-            ramFree: function(ns: NS): number {
-                return this.ram - ns.getServerRam(hostname)[1];
-            },
-            ramUsed: function(ns: NS): number {
-                return ns.getServerRam(hostname)[1];
-            },
-        }
+        let server: Server = getServer(ns, hostname);
         servers.push(server);
     }
+}
+
+export function getServer(ns: NS, hostname: string): Server {
+    let server: Server = {
+        hostname: hostname,
+        portsRequired: ns.getServerNumPortsRequired(hostname),
+        rooted: function(ns: NS): boolean {
+            return ns.hasRootAccess(hostname);
+        },
+        ram: ns.getServerRam(hostname)[0],
+        ramFree: function(ns: NS): number {
+            return this.ram - ns.getServerRam(hostname)[1];
+        },
+        ramUsed: function(ns: NS): number {
+            return ns.getServerRam(hostname)[1];
+        },
+    };
+    return server;
 }
 
 export type Server = {
