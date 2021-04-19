@@ -40,22 +40,26 @@ export function getCodingContract(ns, filename, hostname) {
 }
 function addServer(ns, servers, hostname) {
     if (ns.serverExists(hostname)) {
-        let server = {
-            hostname: hostname,
-            portsRequired: ns.getServerNumPortsRequired(hostname),
-            rooted: function (ns) {
-                return ns.hasRootAccess(hostname);
-            },
-            ram: ns.getServerRam(hostname)[0],
-            ramFree: function (ns) {
-                return this.ram - ns.getServerRam(hostname)[1];
-            },
-            ramUsed: function (ns) {
-                return ns.getServerRam(hostname)[1];
-            },
-        };
+        let server = getServer(ns, hostname);
         servers.push(server);
     }
+}
+export function getServer(ns, hostname) {
+    let server = {
+        hostname: hostname,
+        portsRequired: ns.getServerNumPortsRequired(hostname),
+        rooted: function (ns) {
+            return ns.hasRootAccess(hostname);
+        },
+        ram: ns.getServerRam(hostname)[0],
+        ramFree: function (ns) {
+            return this.ram - ns.getServerRam(hostname)[1];
+        },
+        ramUsed: function (ns) {
+            return ns.getServerRam(hostname)[1];
+        },
+    };
+    return server;
 }
 let hostnames = [
     "foodnstuff",
