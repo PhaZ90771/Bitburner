@@ -182,4 +182,8 @@ async function killAllOther(ns) {
     ps.filter(p => !isSamePS(thisPS, p)).forEach(p => ns.kill(p.filename, home, p.args));
 }
 async function isSamePS(p1, p2) {
+    return p1.filename === p2.filename && isSameArgs(p1.args, p2.args);
+}
+async function isSameArgs(args1, args2) {
+    return args1.length === args2.length && args1.every((value, index) => value === args2[index]);
 }

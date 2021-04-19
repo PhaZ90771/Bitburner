@@ -194,5 +194,9 @@ async function killAllOther(ns: NS) {
 }
 
 async function isSamePS(p1: ProcessInfo, p2: ProcessInfo) {
+    return p1.filename === p2.filename && isSameArgs(p1.args, p2.args);
+}
 
+async function isSameArgs(args1: any[], args2: any[]) {
+    return args1.length === args2.length && args1.every((value, index) => value === args2[index]);
 }
