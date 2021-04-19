@@ -10,7 +10,7 @@ const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside: number = 100;
 
 export async function main(ns: NS): Promise<void> {
-    await killAllOther(ns);
+    //await killAllOther(ns);
 
     disableLogs(ns);
     getArgs(ns);
@@ -190,20 +190,28 @@ async function killAllOther(ns: NS) {
     }
     let ps: Array<ProcessInfo> = ns.ps(home);
 
-    let psToKill = ps.filter(p => !isSamePS(thisPS, p));
-    ns.print(`${psToKill.length} other processes found`);
-    psToKill.forEach(p => ns.kill(p.filename, home, p.args));
+    for(let i: number = 0; i < ps.length; i++) {
+        ns.print(`Looking at ${ps[i].filename}`);
+        var isSame = isSamePS(thisPS, ps[i]);
+        ns.print(`Is same process? ${isSamePS}`);
+        if (isSame) {
+            ns.print(`Killing ${ps[i].filename}`);
+            ns.kill(ps[i].filename, home, ps[i].args);
+        }
+    }
 
-    while(ns.ps(home).length > 1) {
+    let countLeft = ns.ps(home).length;
+    while (countLeft > 1) {
+        ns.print(`${countLeft} processes still alive, awaiting kill`);
         await ns.sleep(1000);
+        countLeft = ns.ps(home).length;
     }
     ns.print("Other processes killed, proceeding");
 }
 
 async function isSamePS(p1: ProcessInfo, p2: ProcessInfo) {
-    return p1.filename === p2.filename && isSameArgs(p1.args, p2.args);
-}
-
-async function isSameArgs(args1: any[], args2: any[]) {
-    return args1.length === args2.length && args1.every((value, index) => value === args2[index]);
+    let sameFilename = p1.filename === p2.filename;
+    let sameArgsLength = p1.args.length === p2.args.length;
+    let sameArgsValues = p1.args.every((value, index) => value === p2.args[index]);
+    return sameFilename && sameArgsLength && sameArgsValues;
 }
