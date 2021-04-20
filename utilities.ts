@@ -1,5 +1,5 @@
 import {BitBurner as NS, CodingContractTypes, CodingAttemptOptions, Host, Script} from "Bitburner"
-import {hasSolver} from "/scripts/contract-solver";
+import {hasSolver} from "/scripts/contract-solver.js";
 
 export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");

@@ -1,4 +1,4 @@
-import { hasSolver } from "/scripts/contract-solver";
+import { hasSolver } from "/scripts/contract-solver.js";
 export function getMoney(ns) {
     return ns.getServerMoneyAvailable("home");
 }
