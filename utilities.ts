@@ -46,6 +46,7 @@ function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
 
 export function getServer(ns: NS, hostname: string): Server {
     let server: Server = {
+        hackingRequired: ns.getServerRequiredHackingLevel(hostname),
         hostname: hostname,
         moneyMax: ns.getServerMaxMoney(hostname),
         portsRequired: ns.getServerNumPortsRequired(hostname),
@@ -65,6 +66,7 @@ export function getServer(ns: NS, hostname: string): Server {
 }
 
 export type Server = {
+    hackingRequired: Number,
     hostname: Host,
     moneyMax: number,
     portsRequired: number,

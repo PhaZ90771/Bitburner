@@ -40,6 +40,7 @@ function addServer(ns, servers, hostname) {
 }
 export function getServer(ns, hostname) {
     let server = {
+        hackingRequired: ns.getServerRequiredHackingLevel(hostname),
         hostname: hostname,
         moneyMax: ns.getServerMaxMoney(hostname),
         portsRequired: ns.getServerNumPortsRequired(hostname),

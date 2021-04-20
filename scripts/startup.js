@@ -52,8 +52,14 @@ function findTargets(ns, servers) {
     weakenTarget = servers[0];
     ns.print(`Server with the lowest min security is: ${weakenTarget.hostname}`);
     servers.sort((a, b) => b.moneyMax - a.moneyMax);
-    hackTarget = servers[0];
-    ns.print(`Server with the largest max money is: ${hackTarget.hostname}`);
+    let hackingLevel = ns.getHackingLevel();
+    for (let server of servers) {
+        if (server.hackingRequired <= hackingLevel) {
+            hackTarget = server;
+            ns.print(`Hackable server with the largest max money is: ${hackTarget.hostname}`);
+            return;
+        }
+    }
 }
 function disableLogs(ns) {
     ns.disableLog("sleep");
