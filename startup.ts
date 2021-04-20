@@ -7,7 +7,7 @@ const pservAutobuyScript: Script = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 
 let homeRamSetAside: number = 100;
-let homeHackTarget: Host;
+let homeHackTarget: Server;
 
 export async function main(ns: NS): Promise<void> {
     //await killAllOther(ns);
@@ -19,7 +19,8 @@ export async function main(ns: NS): Promise<void> {
 
     // Set home hack target to server with largest max money
     servers.sort((a: Server, b: Server) => a.moneyMax - b.moneyMax);
-    homeHackTarget = servers[servers.length - 1].hostname;
+    homeHackTarget = servers[servers.length - 1];
+    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
 
     await homeStartup(ns);
 
@@ -174,7 +175,7 @@ async function setup(ns: NS, server: Server): Promise<void> {
         ns.print("Autohack copy failure");
     }
 
-    let id: number = ns.exec(autohackScript, server.hostname, threads, server);
+    let id: number = ns.exec(autohackScript, server.hostname, threads, server.hostname);
     if (id !== 0) {
         ns.print("Autohack setup success");
     }
@@ -206,7 +207,7 @@ async function homeStartup(ns: NS): Promise<void> {
     let needed: number = ns.getScriptRam(autohackScript);
     let threads: number = ramFree / needed;
     
-    ns.run(autohackScript, threads, homeHackTarget);
+    ns.run(autohackScript, threads, homeHackTarget.hostname);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }

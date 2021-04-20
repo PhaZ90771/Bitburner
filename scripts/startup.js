@@ -10,7 +10,8 @@ export async function main(ns) {
     getArgs(ns);
     let servers = getServers(ns);
     servers.sort((a, b) => a.moneyMax - b.moneyMax);
-    homeHackTarget = servers[servers.length - 1].hostname;
+    homeHackTarget = servers[servers.length - 1];
+    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
     await homeStartup(ns);
     servers.sort((a, b) => a.portsRequired - b.portsRequired);
     var lastPortRequirement = -1;
@@ -166,7 +167,7 @@ async function setup(ns, server) {
     else {
         ns.print("Autohack copy failure");
     }
-    let id = ns.exec(autohackScript, server.hostname, threads, server);
+    let id = ns.exec(autohackScript, server.hostname, threads, server.hostname);
     if (id !== 0) {
         ns.print("Autohack setup success");
     }
@@ -191,7 +192,7 @@ async function homeStartup(ns) {
     let ramFree = ram[0] - ram[1] - homeRamSetAside;
     let needed = ns.getScriptRam(autohackScript);
     let threads = ramFree / needed;
-    ns.run(autohackScript, threads, homeHackTarget);
+    ns.run(autohackScript, threads, homeHackTarget.hostname);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }
