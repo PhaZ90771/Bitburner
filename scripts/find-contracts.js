@@ -13,7 +13,7 @@ export async function main(ns) {
             let contract = getCodingContract(ns, file, server.hostname);
             let solvable = hasSolver(contract.type);
             ns.print(file);
-            ns.tprint(`[${server.hostname}] ${file} (${contract.type}) {Solution Implemented: ${solvable}}`);
+            ns.tprint(`${file} ${server.hostname} (${contract.type}) {Solution Implemented: ${solvable}}`);
             if (numberToFind != -1) {
                 found++;
                 if (found >= numberToFind) {

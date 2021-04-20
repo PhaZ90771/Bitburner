@@ -19,7 +19,7 @@ export async function main(ns: NS): Promise<void> {
             let solvable: boolean = hasSolver(contract.type);
 
             ns.print(file);
-            ns.tprint(`[${server.hostname}] ${file} (${contract.type}) {Solution Implemented: ${solvable}}`);
+            ns.tprint(`${file} ${server.hostname} (${contract.type}) {Solution Implemented: ${solvable}}`);
 
             if (numberToFind != -1) {
                 found++;
