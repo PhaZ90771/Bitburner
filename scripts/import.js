@@ -6,6 +6,7 @@ let config = {
 let importFilename = "import.js";
 let filenames = [
     "autohack-target.js",
+    "autoweaken-target.js",
     "contract-solver.js",
     "find-contracts.js",
     "purchase-hacknet-node.js",

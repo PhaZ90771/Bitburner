@@ -10,6 +10,7 @@ let importFilename: Script = "import.js";
 
 let filenames: Array<Script> = [
     "autohack-target.js",
+    "autoweaken-target.js",
     "contract-solver.js",
     "find-contracts.js",
     "purchase-hacknet-node.js",
