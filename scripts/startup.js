@@ -5,8 +5,8 @@ const autoweakenScript = "/scripts/autoweaken-target.js";
 const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside = 100;
-let homeHackTarget;
-let homeWeakenTarget;
+let hackTarget;
+let weakenTarget;
 let xpFocus = false;
 export async function main(ns) {
     disableLogs(ns);
@@ -33,9 +33,11 @@ export async function main(ns) {
 }
 function getArgs(ns) {
     if (ns.args.length) {
-        if (typeof ns.args[0] === "boolean") {
-            xpFocus = ns.args[0];
+        if (typeof ns.args[0] === "string") {
+            xpFocus = ns.args[0] === "true";
         }
+        let focus = xpFocus ? "XP" : "Money";
+        ns.tprint(`Startup focus is on ${focus}`);
         if (typeof ns.args[1] === "number" && ns.args[1] >= 0) {
             homeRamSetAside = ns.args[1];
             ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
@@ -47,11 +49,11 @@ function getArgs(ns) {
 }
 function findTargets(ns, servers) {
     servers.sort((a, b) => a.securityMin - b.securityMin);
-    homeWeakenTarget = servers[0];
-    ns.print(`Server with the lowest min security is: ${homeWeakenTarget.hostname}`);
+    weakenTarget = servers[0];
+    ns.print(`Server with the lowest min security is: ${weakenTarget.hostname}`);
     servers.sort((a, b) => b.moneyMax - a.moneyMax);
-    homeHackTarget = servers[0];
-    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
+    hackTarget = servers[0];
+    ns.print(`Server with the largest max money is: ${hackTarget.hostname}`);
 }
 function disableLogs(ns) {
     ns.disableLog("sleep");
@@ -153,7 +155,7 @@ function nukeServer(ns, server) {
     return false;
 }
 async function setup(ns, server) {
-    let target = xpFocus ? homeWeakenTarget : homeHackTarget;
+    let target = xpFocus ? weakenTarget : hackTarget;
     let script = xpFocus ? autoweakenScript : autohackScript;
     ns.killall(server.hostname);
     for (let psCount = ns.ps(server.hostname).length; psCount > 0; psCount = ns.ps(server.hostname).length) {
@@ -166,7 +168,7 @@ async function setup(ns, server) {
         ns.print("Autohack setup skipped");
         return;
     }
-    var needed = ns.getScriptRam(autohackScript);
+    var needed = ns.getScriptRam(script);
     ;
     ns.print(`${needed}GB RAM needed`);
     var threads = Math.floor(ram / needed);
@@ -176,7 +178,7 @@ async function setup(ns, server) {
         ns.print("Autohack setup skipped");
         return;
     }
-    let copy = ns.scp(autohackScript, server.hostname);
+    let copy = ns.scp(script, server.hostname);
     if (copy) {
         ns.print("Autohack copy success");
     }
@@ -192,6 +194,8 @@ async function setup(ns, server) {
     }
 }
 async function homeStartup(ns) {
+    let target = xpFocus ? weakenTarget : hackTarget;
+    let script = xpFocus ? autoweakenScript : autohackScript;
     ns.print("");
     ns.print("Home Setup:");
     if (ns.ps(home).length > 1) {
@@ -206,10 +210,8 @@ async function homeStartup(ns) {
     }
     let ram = ns.getServerRam(home);
     let ramFree = ram[0] - ram[1] - homeRamSetAside;
-    let needed = ns.getScriptRam(autohackScript);
+    let needed = ns.getScriptRam(script);
     let threads = ramFree / needed;
-    let target = xpFocus ? homeHackTarget : homeHackTarget;
-    let script = xpFocus ? autoweakenScript : autohackScript;
     ns.run(script, threads, target.hostname);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
