@@ -23,7 +23,7 @@ export async function main(ns) {
             ns.print("");
             ns.print(`Taking over ${++lastPortRequirement}-port servers...`);
         }
-        takeover(ns, server);
+        await takeover(ns, server);
         await ns.sleep(1);
     }
 }
@@ -89,13 +89,13 @@ function nextPortHackerToUnlock(ns) {
     }
     return "None";
 }
-function takeover(ns, server) {
+async function takeover(ns, server) {
     ns.print("");
     ns.print(`Server Takeover: ${server.hostname}`);
     downloadLitFiles(ns, server);
     var nuked = nukeServer(ns, server);
     if (nuked) {
-        setup(ns, server);
+        await setup(ns, server);
         ns.print("Completed server takeover");
     }
     else {
@@ -114,7 +114,7 @@ function downloadLitFiles(ns, server) {
 }
 function nukeServer(ns, server) {
     if (server.rooted(ns)) {
-        ns.print("Already redundant");
+        ns.print("Rooted already");
         return true;
     }
     if (ns.fileExists("BruteSSH.exe"))
@@ -135,8 +135,12 @@ function nukeServer(ns, server) {
     ns.print("Root failuire");
     return false;
 }
-function setup(ns, server) {
+async function setup(ns, server) {
     ns.killall(server.hostname);
+    for (let psCount = ns.ps(server.hostname).length; psCount > 0; psCount = ns.ps(server.hostname).length) {
+        ns.print(`${psCount} scripts left running on target system`);
+        await ns.sleep(1000);
+    }
     var ram = server.ramFree(ns);
     ns.print(`${ram}GB RAM detected`);
     if (ram === 0) {
@@ -145,10 +149,28 @@ function setup(ns, server) {
     }
     var needed = ns.getScriptRam(autohackScript);
     ;
-    var threads = ram / needed;
-    ns.scp(autohackScript, server.hostname);
-    ns.exec(autohackScript, server.hostname, threads, autohackTarget);
-    ns.print("Autohack setup success");
+    ns.print(`${needed}GB RAM needed`);
+    var threads = Math.floor(ram / needed);
+    ns.print(`${threads} autohack thread(s) can be supported`);
+    if (threads === 0) {
+        ns.print("Not enough ram on system");
+        ns.print("Autohack setup skipped");
+        return;
+    }
+    let copy = ns.scp(autohackScript, server.hostname);
+    if (copy) {
+        ns.print("Autohack copy success");
+    }
+    else {
+        ns.print("Autohack copy failure");
+    }
+    let id = ns.exec(autohackScript, server.hostname, threads, autohackTarget);
+    if (id !== 0) {
+        ns.print("Autohack setup success");
+    }
+    else {
+        ns.print("Autohack setup failure");
+    }
 }
 async function homeStartup(ns) {
     ns.print("");

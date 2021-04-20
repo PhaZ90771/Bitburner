@@ -35,7 +35,7 @@ export async function main(ns: NS): Promise<void> {
             ns.print(`Taking over ${++lastPortRequirement}-port servers...`);
         }
 
-        takeover(ns, server!);
+        await takeover(ns, server!);
 
         await ns.sleep(1);
     }
@@ -87,7 +87,7 @@ function nextPortHackerToUnlock(ns: NS): string {
     return "None";
 }
 
-function takeover(ns: NS, server: Server): void {
+async function takeover(ns: NS, server: Server): Promise<void> {
     ns.print("");
     ns.print(`Server Takeover: ${server.hostname}`);
 
@@ -95,7 +95,7 @@ function takeover(ns: NS, server: Server): void {
 
     var nuked = nukeServer(ns, server);
     if (nuked) {
-        setup(ns, server);
+        await setup(ns, server);
         ns.print("Completed server takeover");
     }
     else {
@@ -116,7 +116,7 @@ function downloadLitFiles(ns: NS, server: Server): void {
 
 function nukeServer(ns: NS, server: Server): boolean {
     if (server.rooted(ns)) {
-        ns.print("Already redundant")
+        ns.print("Rooted already")
         return true;
     }
 
@@ -135,8 +135,12 @@ function nukeServer(ns: NS, server: Server): boolean {
     return false;
 }
 
-function setup(ns: NS, server: Server): void {
+async function setup(ns: NS, server: Server): Promise<void> {
     ns.killall(server.hostname);
+    for (let psCount = ns.ps(server.hostname).length; psCount > 0; psCount = ns.ps(server.hostname).length) {
+        ns.print(`${psCount} scripts left running on target system`);
+        await ns.sleep(1000);
+    }
 
     var ram = server.ramFree(ns);
     ns.print(`${ram}GB RAM detected`);
@@ -146,12 +150,32 @@ function setup(ns: NS, server: Server): void {
     }
 
     var needed = ns.getScriptRam(autohackScript);;
-    var threads = ram / needed;
+    ns.print(`${needed}GB RAM needed`);
 
-    ns.scp(autohackScript, server.hostname);
-    ns.exec(autohackScript, server.hostname, threads, autohackTarget);
+    var threads = Math.floor(ram / needed);
+    ns.print(`${threads} autohack thread(s) can be supported`);
 
-    ns.print("Autohack setup success");
+    if (threads === 0) {
+        ns.print("Not enough ram on system");
+        ns.print("Autohack setup skipped");
+        return;
+    }
+
+    let copy = ns.scp(autohackScript, server.hostname);
+    if (copy) {
+        ns.print("Autohack copy success");
+    }
+    else {
+        ns.print("Autohack copy failure");
+    }
+
+    let id: number = ns.exec(autohackScript, server.hostname, threads, autohackTarget);
+    if (id !== 0) {
+        ns.print("Autohack setup success");
+    }
+    else {
+        ns.print("Autohack setup failure");
+    }
 }
 
 async function homeStartup(ns: NS): Promise<void> {
