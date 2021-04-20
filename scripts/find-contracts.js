@@ -1,36 +1,22 @@
-import { hasSolver } from "/scripts/contract-solver.js";
 import { getServers, getCodingContract } from "/scripts/utilities.js";
 const cctFilter = ".cct";
-let numberToFind;
 export async function main(ns) {
-    getSearchLimit(ns);
-    let found = 0;
+    let contracts = getCodingContracts(ns);
+    ns.print(contracts.length + " contract(s) found:");
+    contracts.forEach(function (contract) {
+        ns.print(contract.filename);
+        ns.tprint(`${contract.filename} ${contract.hostname} (${contract.type}) {Solution Implemented: ${contract.solvable()}}`);
+    });
+}
+export function getCodingContracts(ns) {
     let servers = getServers(ns);
+    let contracts = [];
     for (let server of servers) {
         var files = ns.ls(server.hostname, cctFilter);
-        ns.print(files.length + " contract(s) found:");
         for (let file of files) {
             let contract = getCodingContract(ns, file, server.hostname);
-            let solvable = hasSolver(contract.type);
-            ns.print(file);
-            ns.tprint(`${file} ${server.hostname} (${contract.type}) {Solution Implemented: ${solvable}}`);
-            if (numberToFind != -1) {
-                found++;
-                if (found >= numberToFind) {
-                    ns.print(`Limit of ${numberToFind} contract(s) reached`);
-                    ns.exit();
-                }
-            }
+            contracts.push(contract);
         }
     }
-}
-function getSearchLimit(ns) {
-    if (ns.args.length > 0 && typeof ns.args[0] === "number" && ns.args[0] > 0) {
-        numberToFind = ns.args[0];
-        ns.print("Limiting to first " + numberToFind + " contract(s)");
-        ns.tprint("Limiting to first " + numberToFind + " contract(s)");
-    }
-    else {
-        numberToFind = -1;
-    }
+    return contracts;
 }

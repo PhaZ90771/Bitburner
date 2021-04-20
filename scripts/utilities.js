@@ -1,3 +1,4 @@
+import { hasSolver } from "/scripts/contract-solver";
 export function getMoney(ns) {
     return ns.getServerMoneyAvailable("home");
 }
@@ -25,6 +26,9 @@ export function getCodingContract(ns, filename, hostname) {
             return rewardMessage;
         },
         solved: false,
+        solvable: function () {
+            return hasSolver(this.type);
+        },
     };
     return contract;
 }

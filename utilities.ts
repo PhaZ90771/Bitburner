@@ -1,4 +1,5 @@
 import {BitBurner as NS, CodingContractTypes, CodingAttemptOptions, Host, Script} from "Bitburner"
+import {hasSolver} from "/scripts/contract-solver";
 
 export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");
@@ -29,6 +30,9 @@ export function getCodingContract(ns: NS, filename: Script, hostname: Host): Cod
             return rewardMessage;
         },
         solved: false,
+        solvable: function (): boolean {
+            return hasSolver(this.type);
+        },
     };
     return contract;
 }
@@ -80,6 +84,7 @@ export type CodingContractInfo = {
     numTries: Function,
     attempt: Function,
     solved: boolean,
+    solvable: Function,
 }
 
 let hostnames: Array<string> = [
