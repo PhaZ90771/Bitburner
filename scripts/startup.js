@@ -1,19 +1,21 @@
 import { getServers } from "/scripts/utilities.js";
 const home = "home";
-const autohackTarget = "foodnstuff";
 const autohackScript = "/scripts/autohack-target.js";
 const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside = 100;
+let homeHackTarget;
 export async function main(ns) {
     disableLogs(ns);
     getArgs(ns);
+    let servers = getServers(ns);
+    servers.sort((a, b) => a.moneyMax - b.moneyMax);
+    homeHackTarget = servers[servers.length - 1].hostname;
     await homeStartup(ns);
-    let serversToHack = getServers(ns);
-    serversToHack.sort((a, b) => a.portsRequired - b.portsRequired);
+    servers.sort((a, b) => a.portsRequired - b.portsRequired);
     var lastPortRequirement = -1;
-    while (serversToHack.length > 0) {
-        var server = serversToHack.shift();
+    while (servers.length > 0) {
+        var server = servers.shift();
         while (countPortHackers(ns) < server.portsRequired) {
             ns.print("");
             ns.print(`Waiting for ${nextPortHackerToUnlock(ns)} unlock...`);
@@ -164,7 +166,7 @@ async function setup(ns, server) {
     else {
         ns.print("Autohack copy failure");
     }
-    let id = ns.exec(autohackScript, server.hostname, threads, autohackTarget);
+    let id = ns.exec(autohackScript, server.hostname, threads, server);
     if (id !== 0) {
         ns.print("Autohack setup success");
     }
@@ -189,7 +191,7 @@ async function homeStartup(ns) {
     let ramFree = ram[0] - ram[1] - homeRamSetAside;
     let needed = ns.getScriptRam(autohackScript);
     let threads = ramFree / needed;
-    ns.run(autohackScript, threads, autohackTarget);
+    ns.run(autohackScript, threads, homeHackTarget);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }

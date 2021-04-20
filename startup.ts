@@ -2,12 +2,12 @@ import {BitBurner as NS, Host, ProcessInfo, PurchaseableProgram, Script} from "B
 import {getServers, Server} from "/scripts/utilities.js"
 
 const home: Host = "home";
-const autohackTarget: Host = "foodnstuff";
 const autohackScript: Script = "/scripts/autohack-target.js";
 const pservAutobuyScript: Script = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 
 let homeRamSetAside: number = 100;
+let homeHackTarget: Host;
 
 export async function main(ns: NS): Promise<void> {
     //await killAllOther(ns);
@@ -15,14 +15,19 @@ export async function main(ns: NS): Promise<void> {
     disableLogs(ns);
     getArgs(ns);
 
+    let servers: Array<Server> = getServers(ns);
+
+    // Set home hack target to server with largest max money
+    servers.sort((a: Server, b: Server) => a.moneyMax - b.moneyMax);
+    homeHackTarget = servers[servers.length - 1].hostname;
+
     await homeStartup(ns);
 
-    let serversToHack: Array<Server> = getServers(ns);
-    serversToHack.sort((a: Server, b: Server) => a.portsRequired - b.portsRequired);
+    servers.sort((a: Server, b: Server) => a.portsRequired - b.portsRequired);
     
     var lastPortRequirement = -1;
-    while (serversToHack.length > 0) {
-        var server = serversToHack.shift();
+    while (servers.length > 0) {
+        var server = servers.shift();
 
         while (countPortHackers(ns) < server!.portsRequired) {
             ns.print("");
@@ -169,7 +174,7 @@ async function setup(ns: NS, server: Server): Promise<void> {
         ns.print("Autohack copy failure");
     }
 
-    let id: number = ns.exec(autohackScript, server.hostname, threads, autohackTarget);
+    let id: number = ns.exec(autohackScript, server.hostname, threads, server);
     if (id !== 0) {
         ns.print("Autohack setup success");
     }
@@ -201,7 +206,7 @@ async function homeStartup(ns: NS): Promise<void> {
     let needed: number = ns.getScriptRam(autohackScript);
     let threads: number = ramFree / needed;
     
-    ns.run(autohackScript, threads, autohackTarget);
+    ns.run(autohackScript, threads, homeHackTarget);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }

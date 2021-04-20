@@ -43,6 +43,7 @@ function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
 export function getServer(ns: NS, hostname: string): Server {
     let server: Server = {
         hostname: hostname,
+        moneyMax: ns.getServerMaxMoney(hostname),
         portsRequired: ns.getServerNumPortsRequired(hostname),
         rooted: function(ns: NS): boolean {
             return ns.hasRootAccess(hostname);
@@ -60,6 +61,7 @@ export function getServer(ns: NS, hostname: string): Server {
 
 export type Server = {
     hostname: Host,
+    moneyMax: number,
     portsRequired: number,
     rooted: Function,
     ram: number,

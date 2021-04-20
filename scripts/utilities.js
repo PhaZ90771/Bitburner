@@ -37,6 +37,7 @@ function addServer(ns, servers, hostname) {
 export function getServer(ns, hostname) {
     let server = {
         hostname: hostname,
+        moneyMax: ns.getServerMaxMoney(hostname),
         portsRequired: ns.getServerNumPortsRequired(hostname),
         rooted: function (ns) {
             return ns.hasRootAccess(hostname);
