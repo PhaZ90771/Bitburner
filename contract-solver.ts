@@ -39,7 +39,7 @@ function loadSolvers(): void {
     // solvers.set("Algorithmic Stock Trader IV", null);
     solvers.set("Minimum Path Sum in a Triangle", MinimumPathSumInATriangle_Setup);
     // solvers.set("Unique Paths in a Grid I", null);
-    // solvers.set("Unique Paths in a Grid II", null);
+    solvers.set("Unique Paths in a Grid II", UniquePathsInAGridII_Setup);
     // solvers.set("Sanitize Parentheses in Expression", null);
     // solvers.set("Find All Valid Math Expressions", null);
 }
@@ -63,7 +63,7 @@ function SubarrayWithMaximumSum_Setup(ns: NS, data: any): number {
         largestSum: data[0],
         start: 0,
         position: 0,
-        progress: function (ns: NS): string {
+        progress: function (): string {
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     }
@@ -79,7 +79,7 @@ function SubarrayWithMaximumSum_Solve(ns: NS, data: any, args: SubarrayWithMaxim
             sum += data[args.position];
             if (sum > args.largestSum) {
                 args.largestSum = sum;
-                printStatus(ns, args.progress(ns));
+                printStatus(ns, args.progress());
             }
             args.position++;
         }
@@ -261,56 +261,56 @@ type MinimumPathSumInATriangle_Args = {
     depthValue: number,
 }
 
-// TODO
-// function uniquePathsInGrid2(data) {
-//     var bottom = data.length - 1;
-//     var right = data[0].length - 1;
+function UniquePathsInAGridII_Setup(ns: NS, data: any): number {
+    let bottom: number = data.length - 1;
+    let right: number = data[0].length - 1;
+
+    if (data[0][0] == 1) return 0; // Top-left startpoint is blocked
+    if (data[bottom][right] == 1) return 0; // Bottom-right endpoint is blocked
+
+    let args: UniquePathsInAGrid_Args = {
+        bottom: bottom,
+        right: right,
+        paths: 0,
+        closest:  bottom + right,
+        updateClosest: function (x: number, y: number): void {
+            let distance: number =  this.bottom - y + this.right - x;
+            if (distance < this.closest)  {
+                this.closest = distance;
+            }
+        },
+        status: function (): string {
+            return `Closest Distance: ${this.closest} Paths Count: ${this.paths}`;
+        }
+    };
+    ns.print(args.status());
+    return UniquePathsInAGrid_Solve(ns, data, 0, 0, args);
+}
+function UniquePathsInAGrid_Solve(ns: NS, data: any, x: number, y: number, args: UniquePathsInAGrid_Args): number {
+    if (x > args.right) return 0; // Past right endge
+    if (y > args.bottom) return 0; // Past bottom edge
+    if (data[y][x] == 1) return 0; // In obstacle
+    if (y == args.bottom && x == args.right) { // At bottom-right endpoint
+        args.paths++;
+        args.updateClosest(x, y);
+        ns.print(args.status());
+        return 1;
+    }
+    else {
+        args.updateClosest(x, y);
+        ns.print(args.status());
+    }
     
-//     if (data[0][0] == 1) return 0; // Top-left startpoint is blocked
-//     if (data[bottom][right] == 1) return 0; // Bottom-right endpoint is blocked
-    
-//     var record = { };
-//     record.paths = 0;
-//     record.closest = bottom + right;
-    
-//     uniquePathsInGrid2_Status(record, 0, 0, 0);
-//     return uniquePathsInGrid2_Sub(data, 0, 0, record);
-// }
-// function uniquePathsInGrid2_Status(record, x, y, endDelta) {
-//     var updates = endDelta > 0;
-    
-//     record.paths += endDelta;
-    
-//     var bottom = data.length - 1;
-//     var right = data[0].length - 1;
-//     var distance = bottom - y + right - x;
-//     if (distance < record.closest) {
-//         record.closest = distance;
-//         updates++;
-//     }
-    
-//     if (updates > 0) {
-//         printStatus("Closest Distance: " + record.closest + " Paths Count: " + record.paths);
-//     }
-// }
-// function uniquePathsInGrid2_Sub(data, x, y, record) {
-//     var bottom = data.length - 1;
-//     var right = data[0].length - 1;
-    
-//     if (x > right) return 0; // Past right endge
-//     if (y > bottom) return 0; // Past bottom edge
-//     if (data[y][x] == 1) return 0; // In obstacle
-//     if (y == bottom && x == right) { // At bottom-right endpoint
-//         uniquePathsInGrid2_Status(record, x, y, 1);
-//         return 1;
-//     }
-//     else {
-//         uniquePathsInGrid2_Status(record, x, y, 0);
-//     }
-    
-    
-//     var sumPaths = 0;
-//     sumPaths += uniquePathsInGrid2_Sub(data, x, y + 1, record);
-//     sumPaths += uniquePathsInGrid2_Sub(data, x + 1, y, record);
-//     return sumPaths;
-// }
+    let sum: number = 0;
+    sum += UniquePathsInAGrid_Solve(ns, data, x, y + 1, args);
+    sum += UniquePathsInAGrid_Solve(ns, data, x + 1, y, args);
+    return sum;
+}
+type UniquePathsInAGrid_Args = {
+    bottom: number,
+    right: number,
+    paths: number,
+    closest: number,
+    updateClosest: Function,
+    status: Function,
+}
