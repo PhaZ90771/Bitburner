@@ -1,15 +1,14 @@
 import { getCodingContract } from "/scripts/utilities.js";
-let contract;
 export async function main(ns) {
     let filename = ns.args[0];
     let hostname = ns.args[1];
-    contract = getCodingContract(ns, filename, hostname);
-    runSolver(ns);
+    let contract = getCodingContract(ns, filename, hostname);
+    runSolver(ns, contract);
 }
 export function hasSolver(type) {
     return solvers[type] != null;
 }
-function printStatus(ns, status) {
+function printStatus(ns, contract, status) {
     ns.clearLog();
     ns.print(contract.type);
     ns.print("/data/");
@@ -17,41 +16,41 @@ function printStatus(ns, status) {
     ns.print("/status/");
     ns.print(status);
 }
-function runSolver(ns) {
-    printStatus(ns, "Selecting solver...");
+export function runSolver(ns, contract) {
+    printStatus(ns, contract, "Selecting solver...");
     if (solvers[contract.type] != null) {
-        let answer = solvers[contract.type](ns, contract.data);
-        printStatus(ns, `Answer is: ${answer}`);
+        let answer = solvers[contract.type](ns, contract);
+        printStatus(ns, contract, `Answer is: ${answer}`);
         let rewardMessage = contract.attempt(ns, answer);
-        printStatus(ns, rewardMessage);
+        printStatus(ns, contract, rewardMessage);
         ns.tprint(rewardMessage);
     }
     else {
-        printStatus(ns, `Solver has not been implemented yet for: ${contract.type}`);
+        printStatus(ns, contract, `Solver has not been implemented yet for: ${contract.type}`);
         ns.exit();
     }
 }
-let SubarrayWithMaximumSum_Setup = function (ns, data) {
+let SubarrayWithMaximumSum_Setup = function (ns, contract) {
     let args = {
-        largestSum: data[0],
+        largestSum: contract.data[0],
         start: 0,
         position: 0,
         progress: function () {
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     };
-    return SubarrayWithMaximumSum_Solve(ns, data, args);
+    return SubarrayWithMaximumSum_Solve(ns, contract.data, args);
 };
-function SubarrayWithMaximumSum_Solve(ns, data, args) {
-    printStatus(ns, args.progress(ns));
-    while (args.start < data.length) {
+function SubarrayWithMaximumSum_Solve(ns, contract, args) {
+    printStatus(ns, contract, args.progress(ns));
+    while (args.start < contract.data.length) {
         let sum = 0;
         args.position = args.start;
-        while (args.position < data.length) {
-            sum += data[args.position];
+        while (args.position < contract.data.length) {
+            sum += contract.data[args.position];
             if (sum > args.largestSum) {
                 args.largestSum = sum;
-                printStatus(ns, args.progress());
+                printStatus(ns, contract, args.progress());
             }
             args.position++;
         }
@@ -59,23 +58,23 @@ function SubarrayWithMaximumSum_Solve(ns, data, args) {
     }
     return args.largestSum;
 }
-let SpiralizeMatrix_Setup = function (ns, data) {
+let SpiralizeMatrix_Setup = function (ns, contract) {
     let args = {
         current: 0,
-        max: data.length * data[0].length,
+        max: contract.data.length * contract.data[0].length,
         progress: function (ns) {
             return ns.nFormat(this.current / this.max, "0.0%");
         },
     };
-    return SpiralizeMatrix_Solve(ns, data, args);
+    return SpiralizeMatrix_Solve(ns, contract.data, args);
 };
-function SpiralizeMatrix_Solve(ns, data, args) {
+function SpiralizeMatrix_Solve(ns, contract, args) {
     let ret = [];
-    printStatus(ns, args.progress(ns));
+    printStatus(ns, contract, args.progress(ns));
     let left = 0;
-    let right = data[0].length - 1;
+    let right = contract.data[0].length - 1;
     let top = 0;
-    let bottom = data.length - 1;
+    let bottom = contract.data.length - 1;
     let x = 0;
     let y = 0;
     let end = false;
@@ -100,7 +99,7 @@ function SpiralizeMatrix_Solve(ns, data, args) {
         }
         let dirEnd = false;
         while (!dirEnd) {
-            ret.push(data[y][x]);
+            ret.push(contract.data[y][x]);
             switch (dir) {
                 case 0:
                     x++;
@@ -136,24 +135,24 @@ function SpiralizeMatrix_Solve(ns, data, args) {
         }
         end = (top > bottom) || (left > right);
         args.current = ret.length;
-        printStatus(ns, args.progress(ns));
+        printStatus(ns, contract, args.progress(ns));
     }
     return ret;
 }
-let SolveArrayJumpingGame_Setup = function (ns, data) {
+let SolveArrayJumpingGame_Setup = function (ns, contract) {
     let args = {
         maxValue: -1,
     };
-    return solveArrayJumpingGame_Solve(ns, data, 0, args);
+    return solveArrayJumpingGame_Solve(ns, contract, 0, args);
 };
-function solveArrayJumpingGame_Solve(ns, data, pos, args) {
-    let end = data.length - 1;
+function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
+    let end = contract.data.length - 1;
     if (pos <= end && pos > args.maxValue) {
         args.maxValue = pos;
         let status = `Current max is: ${args.maxValue}/${end}`;
-        printStatus(ns, status);
+        printStatus(ns, contract, status);
     }
-    let maxJump = data[pos];
+    let maxJump = contract.data[pos];
     if (pos == end)
         return 1;
     if (pos >= end)
@@ -162,35 +161,35 @@ function solveArrayJumpingGame_Solve(ns, data, pos, args) {
         return 0;
     for (let jump = 1; jump <= maxJump; jump++) {
         let landing = pos + jump;
-        let result = solveArrayJumpingGame_Solve(ns, data, landing, args);
+        let result = solveArrayJumpingGame_Solve(ns, contract, landing, args);
         if (result == 1) {
             return 1;
         }
     }
     return 0;
 }
-let MinimumPathSumInATriangle_Setup = function MinimumPathSumInATriangle_Setup(ns, data) {
+let MinimumPathSumInATriangle_Setup = function MinimumPathSumInATriangle_Setup(ns, contract) {
     let args = {
         minValue: 0,
         depthValue: -1,
     };
-    return MinimumPathSumInATriangle_Solve(ns, data, 0, 0, 0, args);
+    return MinimumPathSumInATriangle_Solve(ns, contract, 0, 0, 0, args);
 };
-function MinimumPathSumInATriangle_Solve(ns, data, x, y, sum, args) {
-    let endDepth = data.length - 1;
+function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
+    let endDepth = contract.data.length - 1;
     let end = y == endDepth;
-    sum += data[y][x];
+    sum += contract.data[y][x];
     if (y > args.depthValue || (y == args.depthValue && sum < args.minValue)) {
         args.depthValue = y;
         args.minValue = sum;
         let status = `Min sum at current depth[${args.depthValue}/${endDepth}] is: ${args.minValue}`;
-        printStatus(ns, status);
+        printStatus(ns, contract, status);
     }
     if (end) {
         return sum;
     }
-    let left = MinimumPathSumInATriangle_Solve(ns, data, x, y + 1, sum, args);
-    let right = MinimumPathSumInATriangle_Solve(ns, data, x + 1, y + 1, sum, args);
+    let left = MinimumPathSumInATriangle_Solve(ns, contract.data, x, y + 1, sum, args);
+    let right = MinimumPathSumInATriangle_Solve(ns, contract.data, x + 1, y + 1, sum, args);
     if (left < right) {
         return left;
     }
@@ -198,12 +197,12 @@ function MinimumPathSumInATriangle_Solve(ns, data, x, y, sum, args) {
         return right;
     }
 }
-let UniquePathsInAGridII_Setup = function UniquePathsInAGridII_Setup(ns, data) {
-    let bottom = data.length - 1;
-    let right = data[0].length - 1;
-    if (data[0][0] == 1)
+let UniquePathsInAGridII_Setup = function UniquePathsInAGridII_Setup(ns, contract) {
+    let bottom = contract.data.length - 1;
+    let right = contract.data[0].length - 1;
+    if (contract.data[0][0] == 1)
         return 0;
-    if (data[bottom][right] == 1)
+    if (contract.data[bottom][right] == 1)
         return 0;
     let args = {
         bottom: bottom,
@@ -220,29 +219,29 @@ let UniquePathsInAGridII_Setup = function UniquePathsInAGridII_Setup(ns, data) {
             return `Closest Distance: ${this.closest} Paths Count: ${this.paths}`;
         }
     };
-    ns.print(args.status());
-    return UniquePathsInAGrid_Solve(ns, data, 0, 0, args);
+    printStatus(ns, contract, args.status());
+    return UniquePathsInAGrid_Solve(ns, contract, 0, 0, args);
 };
-function UniquePathsInAGrid_Solve(ns, data, x, y, args) {
+function UniquePathsInAGrid_Solve(ns, contract, x, y, args) {
     if (x > args.right)
         return 0;
     if (y > args.bottom)
         return 0;
-    if (data[y][x] == 1)
+    if (contract.data[y][x] == 1)
         return 0;
     if (y == args.bottom && x == args.right) {
         args.paths++;
         args.updateClosest(x, y);
-        ns.print(args.status());
+        printStatus(ns, contract, args.status());
         return 1;
     }
     else {
         args.updateClosest(x, y);
-        ns.print(args.status());
+        printStatus(ns, contract, args.status());
     }
     let sum = 0;
-    sum += UniquePathsInAGrid_Solve(ns, data, x, y + 1, args);
-    sum += UniquePathsInAGrid_Solve(ns, data, x + 1, y, args);
+    sum += UniquePathsInAGrid_Solve(ns, contract, x, y + 1, args);
+    sum += UniquePathsInAGrid_Solve(ns, contract, x + 1, y, args);
     return sum;
 }
 let solvers = {

@@ -1,21 +1,19 @@
 import {BitBurner as NS, CodingContractTypes, Host, Script} from "Bitburner"
 import {CodingContractInfo, getCodingContract} from "/scripts/utilities.js"
 
-let contract: CodingContractInfo;
-
 export async function main(ns: NS): Promise<void> {
     let filename: Script = ns.args[0];
     let hostname: Host = ns.args[1];
     // TODO: Check whether hostname and filename are valid
-    contract = getCodingContract(ns, filename, hostname);
-    runSolver(ns);
+    let contract: CodingContractInfo = getCodingContract(ns, filename, hostname);
+    runSolver(ns, contract);
 }
 
 export function hasSolver(type: CodingContractTypes) {
     return solvers[type] != null;
 }
 
-function printStatus(ns: NS, status: string): void {
+function printStatus(ns: NS, contract: CodingContractInfo, status: string): void {
     ns.clearLog();
     
     ns.print(contract.type);
@@ -27,43 +25,43 @@ function printStatus(ns: NS, status: string): void {
     ns.print(status);
 }
 
-function runSolver(ns: NS): void {
-    printStatus(ns, "Selecting solver...");
+export function runSolver(ns: NS, contract: CodingContractInfo): void {
+    printStatus(ns, contract, "Selecting solver...");
     if (solvers[contract.type] != null) {
-        let answer: string = solvers[contract.type](ns, contract.data);
-        printStatus(ns, `Answer is: ${answer}`);
+        let answer: string = solvers[contract.type](ns, contract);
+        printStatus(ns, contract, `Answer is: ${answer}`);
         let rewardMessage = contract.attempt(ns, answer);
-        printStatus(ns, rewardMessage);
+        printStatus(ns, contract, rewardMessage);
         ns.tprint(rewardMessage);
     }
     else {
-        printStatus(ns, `Solver has not been implemented yet for: ${contract.type}`);
+        printStatus(ns, contract, `Solver has not been implemented yet for: ${contract.type}`);
         ns.exit();
     }
 }
 
-let SubarrayWithMaximumSum_Setup: Function = function (ns: NS, data: any): number {
+let SubarrayWithMaximumSum_Setup: Function = function (ns: NS, contract: CodingContractInfo): number {
     let args: SubarrayWithMaximumSum_Args = {
-        largestSum: data[0],
+        largestSum: contract.data[0],
         start: 0,
         position: 0,
         progress: function (): string {
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     }
-    return SubarrayWithMaximumSum_Solve(ns, data, args);
+    return SubarrayWithMaximumSum_Solve(ns, contract.data, args);
 }
-function SubarrayWithMaximumSum_Solve(ns: NS, data: any, args: SubarrayWithMaximumSum_Args): number {
-    printStatus(ns, args.progress(ns));
+function SubarrayWithMaximumSum_Solve(ns: NS, contract: CodingContractInfo, args: SubarrayWithMaximumSum_Args): number {
+    printStatus(ns, contract, args.progress(ns));
     
-    while (args.start < data.length) {
+    while (args.start < contract.data.length) {
         let sum: number = 0;
         args.position = args.start;
-        while (args.position < data.length) {
-            sum += data[args.position];
+        while (args.position < contract.data.length) {
+            sum += contract.data[args.position];
             if (sum > args.largestSum) {
                 args.largestSum = sum;
-                printStatus(ns, args.progress());
+                printStatus(ns, contract, args.progress());
             }
             args.position++;
         }
@@ -79,24 +77,24 @@ type SubarrayWithMaximumSum_Args = {
     progress: Function,
 }
 
-let SpiralizeMatrix_Setup: Function = function (ns: NS, data: any): Array<number> {
+let SpiralizeMatrix_Setup: Function = function (ns: NS, contract: CodingContractInfo): Array<number> {
     let args: SpiralizeMatrix_Args = {
         current: 0,
-        max: data.length * data[0].length,
+        max: contract.data.length * contract.data[0].length,
         progress: function (ns: NS): string {
             return ns.nFormat(this.current / this.max, "0.0%");
         },
     }
-    return SpiralizeMatrix_Solve(ns, data, args);
+    return SpiralizeMatrix_Solve(ns, contract.data, args);
 }
-function SpiralizeMatrix_Solve(ns: NS, data: any, args: SpiralizeMatrix_Args): Array<number>  {
+function SpiralizeMatrix_Solve(ns: NS, contract: CodingContractInfo, args: SpiralizeMatrix_Args): Array<number>  {
     let ret: Array<number> = [];
-    printStatus(ns, args.progress(ns));
+    printStatus(ns, contract, args.progress(ns));
     
     let left: number = 0;
-    let right: number = data[0].length - 1;
+    let right: number = contract.data[0].length - 1;
     let top: number = 0;
-    let bottom: number = data.length - 1;
+    let bottom: number = contract.data.length - 1;
     let x: number = 0;
     let y: number = 0;
     let end: boolean = false;
@@ -123,7 +121,7 @@ function SpiralizeMatrix_Solve(ns: NS, data: any, args: SpiralizeMatrix_Args): A
         
         let dirEnd: boolean = false;
         while (!dirEnd) {
-            ret.push(data[y][x]);
+            ret.push(contract.data[y][x]);
             
             switch (dir) {
             case 0:
@@ -163,7 +161,7 @@ function SpiralizeMatrix_Solve(ns: NS, data: any, args: SpiralizeMatrix_Args): A
         end = (top > bottom) || (left > right);
         
         args.current = ret.length;
-        printStatus(ns, args.progress(ns));
+        printStatus(ns, contract, args.progress(ns));
     }
     
     return ret;
@@ -174,29 +172,29 @@ type SpiralizeMatrix_Args = {
     progress: Function,
 }
 
-let SolveArrayJumpingGame_Setup: Function = function (ns: NS, data: any): number {
+let SolveArrayJumpingGame_Setup: Function = function (ns: NS, contract: CodingContractInfo): number {
     let args: ArrayJumpingGame_Args = {
         maxValue: -1,
     };
-    return solveArrayJumpingGame_Solve(ns, data, 0, args);
+    return solveArrayJumpingGame_Solve(ns, contract, 0, args);
 }
-function solveArrayJumpingGame_Solve(ns: NS, data: any, pos: number, args: ArrayJumpingGame_Args): number {
-    let end: number = data.length - 1;
+function solveArrayJumpingGame_Solve(ns: NS, contract: CodingContractInfo, pos: number, args: ArrayJumpingGame_Args): number {
+    let end: number = contract.data.length - 1;
     
     if (pos <= end && pos > args.maxValue) {
         args.maxValue = pos;
         let status: string = `Current max is: ${args.maxValue}/${end}`;
-        printStatus(ns, status);
+        printStatus(ns, contract, status);
     }
     
-    let maxJump: number = data[pos];
+    let maxJump: number = contract.data[pos];
     if (pos == end) return 1;
     if (pos >= end) return 0;
     if (pos != end && maxJump === 0) return 0;
     
     for (let jump: number = 1; jump <= maxJump; jump++) {
         let landing: number =  pos + jump;
-        let result: number = solveArrayJumpingGame_Solve(ns, data, landing, args);
+        let result: number = solveArrayJumpingGame_Solve(ns, contract, landing, args);
         if (result == 1) {
             return 1;
         }
@@ -207,31 +205,31 @@ type ArrayJumpingGame_Args = {
     maxValue: number,
 }
 
-let MinimumPathSumInATriangle_Setup: Function = function MinimumPathSumInATriangle_Setup(ns: NS, data: any): number {
+let MinimumPathSumInATriangle_Setup: Function = function MinimumPathSumInATriangle_Setup(ns: NS, contract: CodingContractInfo): number {
     let args: MinimumPathSumInATriangle_Args = {
         minValue: 0,
         depthValue: -1,
     };
-    return MinimumPathSumInATriangle_Solve(ns, data, 0, 0, 0, args);
+    return MinimumPathSumInATriangle_Solve(ns, contract, 0, 0, 0, args);
 }
-function MinimumPathSumInATriangle_Solve(ns: NS, data: any, x: number, y: number, sum: number, args: MinimumPathSumInATriangle_Args): number {
-    let endDepth: number = data.length - 1;
+function MinimumPathSumInATriangle_Solve(ns: NS, contract: CodingContractInfo, x: number, y: number, sum: number, args: MinimumPathSumInATriangle_Args): number {
+    let endDepth: number = contract.data.length - 1;
     let end: boolean = y == endDepth;
-    sum += data[y][x];
+    sum += contract.data[y][x];
     
     if (y > args.depthValue ||( y == args.depthValue && sum < args.minValue)) {
         args.depthValue = y;
         args.minValue = sum;
         let status: string = `Min sum at current depth[${args.depthValue}/${endDepth}] is: ${args.minValue}`;
-        printStatus(ns, status);
+        printStatus(ns, contract, status);
     }
     
     if (end) {
         return sum;
     }
     
-    let left: number = MinimumPathSumInATriangle_Solve(ns, data, x, y + 1, sum, args);
-    let right: number = MinimumPathSumInATriangle_Solve(ns, data, x + 1, y + 1, sum, args);
+    let left: number = MinimumPathSumInATriangle_Solve(ns, contract.data, x, y + 1, sum, args);
+    let right: number = MinimumPathSumInATriangle_Solve(ns, contract.data, x + 1, y + 1, sum, args);
     
     if (left < right) {
         return left;
@@ -245,12 +243,12 @@ type MinimumPathSumInATriangle_Args = {
     depthValue: number,
 }
 
-let UniquePathsInAGridII_Setup: Function = function UniquePathsInAGridII_Setup(ns: NS, data: any): number {
-    let bottom: number = data.length - 1;
-    let right: number = data[0].length - 1;
+let UniquePathsInAGridII_Setup: Function = function UniquePathsInAGridII_Setup(ns: NS, contract: CodingContractInfo): number {
+    let bottom: number = contract.data.length - 1;
+    let right: number = contract.data[0].length - 1;
 
-    if (data[0][0] == 1) return 0; // Top-left startpoint is blocked
-    if (data[bottom][right] == 1) return 0; // Bottom-right endpoint is blocked
+    if (contract.data[0][0] == 1) return 0; // Top-left startpoint is blocked
+    if (contract.data[bottom][right] == 1) return 0; // Bottom-right endpoint is blocked
 
     let args: UniquePathsInAGrid_Args = {
         bottom: bottom,
@@ -267,27 +265,27 @@ let UniquePathsInAGridII_Setup: Function = function UniquePathsInAGridII_Setup(n
             return `Closest Distance: ${this.closest} Paths Count: ${this.paths}`;
         }
     };
-    ns.print(args.status());
-    return UniquePathsInAGrid_Solve(ns, data, 0, 0, args);
+    printStatus(ns, contract, args.status());
+    return UniquePathsInAGrid_Solve(ns, contract, 0, 0, args);
 }
-function UniquePathsInAGrid_Solve(ns: NS, data: any, x: number, y: number, args: UniquePathsInAGrid_Args): number {
+function UniquePathsInAGrid_Solve(ns: NS, contract: CodingContractInfo, x: number, y: number, args: UniquePathsInAGrid_Args): number {
     if (x > args.right) return 0; // Past right endge
     if (y > args.bottom) return 0; // Past bottom edge
-    if (data[y][x] == 1) return 0; // In obstacle
+    if (contract.data[y][x] == 1) return 0; // In obstacle
     if (y == args.bottom && x == args.right) { // At bottom-right endpoint
         args.paths++;
         args.updateClosest(x, y);
-        ns.print(args.status());
+        printStatus(ns, contract, args.status());
         return 1;
     }
     else {
         args.updateClosest(x, y);
-        ns.print(args.status());
+        printStatus(ns, contract, args.status());
     }
     
     let sum: number = 0;
-    sum += UniquePathsInAGrid_Solve(ns, data, x, y + 1, args);
-    sum += UniquePathsInAGrid_Solve(ns, data, x + 1, y, args);
+    sum += UniquePathsInAGrid_Solve(ns, contract, x, y + 1, args);
+    sum += UniquePathsInAGrid_Solve(ns, contract, x + 1, y, args);
     return sum;
 }
 type UniquePathsInAGrid_Args = {

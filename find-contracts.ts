@@ -7,7 +7,7 @@ const cctFilter: string = ".cct";
 export async function main(ns: NS): Promise<void> {
     let contracts: Array<CodingContractInfo> = getCodingContracts(ns);
     ns.print(contracts.length + " contract(s) found:");
-    contracts.forEach(function (contract) {
+    contracts.forEach(function (contract: CodingContractInfo) {
         ns.print(contract.filename);
         ns.tprint(`${contract.filename} ${contract.hostname} (${contract.type}) {Solution Implemented: ${contract.solvable()}}`);
     });

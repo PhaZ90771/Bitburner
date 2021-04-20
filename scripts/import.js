@@ -12,6 +12,7 @@ let filenames = [
     "purchase-hacknet-node.js",
     "purchase-server-8gb.js",
     "startup.js",
+    "solve-contracts.js",
     "utilities.js",
 ];
 export async function main(ns) {
