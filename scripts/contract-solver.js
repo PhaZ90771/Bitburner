@@ -21,6 +21,7 @@ function loadSolvers() {
     solvers.set("Spiralize Matrix", SpiralizeMatrix_Setup);
     solvers.set("Array Jumping Game", solveArrayJumpingGame_Setup);
     solvers.set("Minimum Path Sum in a Triangle", MinimumPathSumInATriangle_Setup);
+    solvers.set("Unique Paths in a Grid II", UniquePathsInAGridII_Setup);
 }
 function runSolver(ns) {
     printStatus(ns, "Selecting solver...");
@@ -35,17 +36,17 @@ function runSolver(ns) {
         ns.exit();
     }
 }
-function SubarrayWithMaximumSum_Setup(ns, data) {
+let SubarrayWithMaximumSum_Setup = function (ns, data) {
     let args = {
         largestSum: data[0],
         start: 0,
         position: 0,
-        progress: function (ns) {
+        progress: function () {
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     };
     return SubarrayWithMaximumSum_Solve(ns, data, args);
-}
+};
 function SubarrayWithMaximumSum_Solve(ns, data, args) {
     printStatus(ns, args.progress(ns));
     while (args.start < data.length) {
@@ -55,7 +56,7 @@ function SubarrayWithMaximumSum_Solve(ns, data, args) {
             sum += data[args.position];
             if (sum > args.largestSum) {
                 args.largestSum = sum;
-                printStatus(ns, args.progress(ns));
+                printStatus(ns, args.progress());
             }
             args.position++;
         }
@@ -63,7 +64,7 @@ function SubarrayWithMaximumSum_Solve(ns, data, args) {
     }
     return args.largestSum;
 }
-function SpiralizeMatrix_Setup(ns, data) {
+let SpiralizeMatrix_Setup = function (ns, data) {
     let args = {
         current: 0,
         max: data.length * data[0].length,
@@ -72,7 +73,7 @@ function SpiralizeMatrix_Setup(ns, data) {
         },
     };
     return SpiralizeMatrix_Solve(ns, data, args);
-}
+};
 function SpiralizeMatrix_Solve(ns, data, args) {
     let ret = [];
     printStatus(ns, args.progress(ns));
@@ -144,12 +145,12 @@ function SpiralizeMatrix_Solve(ns, data, args) {
     }
     return ret;
 }
-function solveArrayJumpingGame_Setup(ns, data) {
+let solveArrayJumpingGame_Setup = function (ns, data) {
     let args = {
         maxValue: -1,
     };
     return solveArrayJumpingGame_Solve(ns, data, 0, args);
-}
+};
 function solveArrayJumpingGame_Solve(ns, data, pos, args) {
     let end = data.length - 1;
     if (pos <= end && pos > args.maxValue) {
@@ -173,13 +174,13 @@ function solveArrayJumpingGame_Solve(ns, data, pos, args) {
     }
     return 0;
 }
-function MinimumPathSumInATriangle_Setup(ns, data) {
+let MinimumPathSumInATriangle_Setup = function (ns, data) {
     let args = {
         minValue: 0,
         depthValue: -1,
     };
     return MinimumPathSumInATriangle_Solve(ns, data, 0, 0, 0, args);
-}
+};
 function MinimumPathSumInATriangle_Solve(ns, data, x, y, sum, args) {
     let endDepth = data.length - 1;
     let end = y == endDepth;
@@ -201,4 +202,51 @@ function MinimumPathSumInATriangle_Solve(ns, data, x, y, sum, args) {
     else {
         return right;
     }
+}
+let UniquePathsInAGridII_Setup = function (ns, data) {
+    let bottom = data.length - 1;
+    let right = data[0].length - 1;
+    if (data[0][0] == 1)
+        return 0;
+    if (data[bottom][right] == 1)
+        return 0;
+    let args = {
+        bottom: bottom,
+        right: right,
+        paths: 0,
+        closest: bottom + right,
+        updateClosest: function (x, y) {
+            let distance = this.bottom - y + this.right - x;
+            if (distance < this.closest) {
+                this.closest = distance;
+            }
+        },
+        status: function () {
+            return `Closest Distance: ${this.closest} Paths Count: ${this.paths}`;
+        }
+    };
+    ns.print(args.status());
+    return UniquePathsInAGrid_Solve(ns, data, 0, 0, args);
+};
+function UniquePathsInAGrid_Solve(ns, data, x, y, args) {
+    if (x > args.right)
+        return 0;
+    if (y > args.bottom)
+        return 0;
+    if (data[y][x] == 1)
+        return 0;
+    if (y == args.bottom && x == args.right) {
+        args.paths++;
+        args.updateClosest(x, y);
+        ns.print(args.status());
+        return 1;
+    }
+    else {
+        args.updateClosest(x, y);
+        ns.print(args.status());
+    }
+    let sum = 0;
+    sum += UniquePathsInAGrid_Solve(ns, data, x, y + 1, args);
+    sum += UniquePathsInAGrid_Solve(ns, data, x + 1, y, args);
+    return sum;
 }

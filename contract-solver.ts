@@ -58,7 +58,7 @@ function runSolver(ns: NS): void {
     }
 }
 
-function SubarrayWithMaximumSum_Setup(ns: NS, data: any): number {
+let SubarrayWithMaximumSum_Setup: Function = function (ns: NS, data: any): number {
     let args: SubarrayWithMaximumSum_Args = {
         largestSum: data[0],
         start: 0,
@@ -95,7 +95,7 @@ type SubarrayWithMaximumSum_Args = {
     progress: Function,
 }
 
-function SpiralizeMatrix_Setup(ns: NS, data: any): Array<number> {
+let SpiralizeMatrix_Setup: Function = function (ns: NS, data: any): Array<number> {
     let args: SpiralizeMatrix_Args = {
         current: 0,
         max: data.length * data[0].length,
@@ -190,7 +190,7 @@ type SpiralizeMatrix_Args = {
     progress: Function,
 }
 
-function solveArrayJumpingGame_Setup(ns: NS, data: any): number {
+let solveArrayJumpingGame_Setup: Function = function (ns: NS, data: any): number {
     let args: ArrayJumpingGame_Args = {
         maxValue: -1,
     };
@@ -223,7 +223,7 @@ type ArrayJumpingGame_Args = {
     maxValue: number,
 }
 
-function MinimumPathSumInATriangle_Setup(ns: NS, data: any): number {
+let MinimumPathSumInATriangle_Setup: Function = function (ns: NS, data: any): number {
     let args: MinimumPathSumInATriangle_Args = {
         minValue: 0,
         depthValue: -1,
@@ -261,7 +261,7 @@ type MinimumPathSumInATriangle_Args = {
     depthValue: number,
 }
 
-function UniquePathsInAGridII_Setup(ns: NS, data: any): number {
+let UniquePathsInAGridII_Setup: Function = function (ns: NS, data: any): number {
     let bottom: number = data.length - 1;
     let right: number = data[0].length - 1;
 
