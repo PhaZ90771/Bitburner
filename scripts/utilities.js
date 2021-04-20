@@ -49,6 +49,7 @@ export function getServer(ns, hostname) {
         ramUsed: function (ns) {
             return ns.getServerRam(hostname)[1];
         },
+        securityMin: ns.getServerMinSecurityLevel(hostname),
     };
     return server;
 }

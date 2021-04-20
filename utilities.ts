@@ -55,6 +55,7 @@ export function getServer(ns: NS, hostname: string): Server {
         ramUsed: function(ns: NS): number {
             return ns.getServerRam(hostname)[1];
         },
+        securityMin: ns.getServerMinSecurityLevel(hostname),
     };
     return server;
 }
@@ -67,6 +68,7 @@ export type Server = {
     ram: number,
     ramFree: Function,
     ramUsed: Function,
+    securityMin: number,
 }
 
 export type CodingContractInfo = {

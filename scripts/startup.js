@@ -1,17 +1,18 @@
 import { getServers } from "/scripts/utilities.js";
 const home = "home";
 const autohackScript = "/scripts/autohack-target.js";
+const autoweakenScript = "/scripts/autoweaken-target.js";
 const pservAutobuyScript = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript = "/scripts/purchase-hacknet-node.js";
 let homeRamSetAside = 100;
 let homeHackTarget;
+let homeWeakenTarget;
+let xpFocus = false;
 export async function main(ns) {
     disableLogs(ns);
     getArgs(ns);
     let servers = getServers(ns);
-    servers.sort((a, b) => a.moneyMax - b.moneyMax);
-    homeHackTarget = servers[servers.length - 1];
-    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
+    findTargets(ns, servers);
     await homeStartup(ns);
     servers.sort((a, b) => a.portsRequired - b.portsRequired);
     var lastPortRequirement = -1;
@@ -31,13 +32,26 @@ export async function main(ns) {
     }
 }
 function getArgs(ns) {
-    if (ns.args.length > 0 && typeof ns.args[0] === "number" && ns.args[0] >= 0) {
-        homeRamSetAside = ns.args[0];
-        ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
+    if (ns.args.length) {
+        if (typeof ns.args[0] === "boolean") {
+            xpFocus = ns.args[0];
+        }
+        if (typeof ns.args[1] === "number" && ns.args[1] >= 0) {
+            homeRamSetAside = ns.args[1];
+            ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
+        }
+        else {
+            ns.tprint(`Setting aside at least ${homeRamSetAside}GB [default] of ram on home system`);
+        }
     }
-    else {
-        ns.tprint(`Setting aside at least ${homeRamSetAside}GB [default] of ram on home system`);
-    }
+}
+function findTargets(ns, servers) {
+    servers.sort((a, b) => a.securityMin - b.securityMin);
+    homeWeakenTarget = servers[0];
+    ns.print(`Server with the lowest min security is: ${homeWeakenTarget.hostname}`);
+    servers.sort((a, b) => b.moneyMax - a.moneyMax);
+    homeHackTarget = servers[0];
+    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
 }
 function disableLogs(ns) {
     ns.disableLog("sleep");
@@ -139,6 +153,8 @@ function nukeServer(ns, server) {
     return false;
 }
 async function setup(ns, server) {
+    let target = xpFocus ? homeWeakenTarget : homeHackTarget;
+    let script = xpFocus ? autoweakenScript : autohackScript;
     ns.killall(server.hostname);
     for (let psCount = ns.ps(server.hostname).length; psCount > 0; psCount = ns.ps(server.hostname).length) {
         ns.print(`${psCount} scripts left running on target system`);
@@ -167,7 +183,7 @@ async function setup(ns, server) {
     else {
         ns.print("Autohack copy failure");
     }
-    let id = ns.exec(autohackScript, server.hostname, threads, server.hostname);
+    let id = ns.exec(script, server.hostname, threads, target.hostname);
     if (id !== 0) {
         ns.print("Autohack setup success");
     }
@@ -192,7 +208,9 @@ async function homeStartup(ns) {
     let ramFree = ram[0] - ram[1] - homeRamSetAside;
     let needed = ns.getScriptRam(autohackScript);
     let threads = ramFree / needed;
-    ns.run(autohackScript, threads, homeHackTarget.hostname);
+    let target = xpFocus ? homeHackTarget : homeHackTarget;
+    let script = xpFocus ? autoweakenScript : autohackScript;
+    ns.run(script, threads, target.hostname);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }

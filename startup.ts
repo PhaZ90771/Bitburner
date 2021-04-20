@@ -3,11 +3,14 @@ import {getServers, Server} from "/scripts/utilities.js"
 
 const home: Host = "home";
 const autohackScript: Script = "/scripts/autohack-target.js";
+const autoweakenScript: Script = "/scripts/autoweaken-target.js";
 const pservAutobuyScript: Script = "/scripts/purchase-server-8gb.js";
 const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 
 let homeRamSetAside: number = 100;
 let homeHackTarget: Server;
+let homeWeakenTarget: Server;
+let xpFocus: boolean = false;
 
 export async function main(ns: NS): Promise<void> {
     //await killAllOther(ns);
@@ -17,10 +20,7 @@ export async function main(ns: NS): Promise<void> {
 
     let servers: Array<Server> = getServers(ns);
 
-    // Set home hack target to server with largest max money
-    servers.sort((a: Server, b: Server) => a.moneyMax - b.moneyMax);
-    homeHackTarget = servers[servers.length - 1];
-    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
+    findTargets(ns, servers);
 
     await homeStartup(ns);
 
@@ -48,13 +48,31 @@ export async function main(ns: NS): Promise<void> {
 }
 
 function getArgs(ns: NS) {
-    if (ns.args.length > 0 && typeof ns.args[0] === "number" && ns.args[0] >= 0) {
-        homeRamSetAside = ns.args[0];
-        ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
+    if (ns.args.length) {
+        if (typeof ns.args[0] === "boolean") {
+            xpFocus = ns.args[0]
+        }
+        
+        if (typeof ns.args[1] === "number" && ns.args[1] >= 0) {
+            homeRamSetAside = ns.args[1];
+            ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
+        }
+        else {
+            ns.tprint(`Setting aside at least ${homeRamSetAside}GB [default] of ram on home system`);
+        }
     }
-    else {
-        ns.tprint(`Setting aside at least ${homeRamSetAside}GB [default] of ram on home system`);
-    }
+}
+
+function findTargets(ns: NS, servers: Array<Server>) {
+    // Lowest Min Security
+    servers.sort((a: Server, b: Server) => a.securityMin - b.securityMin);
+    homeWeakenTarget = servers[0];
+    ns.print(`Server with the lowest min security is: ${homeWeakenTarget.hostname}`);
+    
+    // Largest Max Money
+    servers.sort((a: Server, b: Server) => b.moneyMax - a.moneyMax);
+    homeHackTarget = servers[0];
+    ns.print(`Server with the largest max money is: ${homeHackTarget.hostname}`);
 }
 
 function disableLogs(ns: NS): void {
@@ -142,6 +160,9 @@ function nukeServer(ns: NS, server: Server): boolean {
 }
 
 async function setup(ns: NS, server: Server): Promise<void> {
+    let target: Server = xpFocus ? homeWeakenTarget : homeHackTarget;
+    let script: Script = xpFocus ? autoweakenScript : autohackScript;
+
     ns.killall(server.hostname);
     for (let psCount = ns.ps(server.hostname).length; psCount > 0; psCount = ns.ps(server.hostname).length) {
         ns.print(`${psCount} scripts left running on target system`);
@@ -175,7 +196,7 @@ async function setup(ns: NS, server: Server): Promise<void> {
         ns.print("Autohack copy failure");
     }
 
-    let id: number = ns.exec(autohackScript, server.hostname, threads, server.hostname);
+    let id: number = ns.exec(script, server.hostname, threads, target.hostname);
     if (id !== 0) {
         ns.print("Autohack setup success");
     }
@@ -206,8 +227,10 @@ async function homeStartup(ns: NS): Promise<void> {
     let ramFree: number = ram[0] - ram[1] - homeRamSetAside;
     let needed: number = ns.getScriptRam(autohackScript);
     let threads: number = ramFree / needed;
+    let target: Server = xpFocus ? homeHackTarget : homeHackTarget;
+    let script: Script = xpFocus ? autoweakenScript : autohackScript;
     
-    ns.run(autohackScript, threads, homeHackTarget.hostname);
+    ns.run(script, threads, target.hostname);
     ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }
