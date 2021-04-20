@@ -1,5 +1,6 @@
 import {BitBurner as NS, CodingContract, CodingContractTypes} from "Bitburner"
-import {getServers, Server, getSolvableCodingContractTypes, getCodingContract, CodingContractInfo} from "/scripts/utilities.js"
+import {hasSolver} from "./contract-solver";
+import {getServers, Server, getCodingContract, CodingContractInfo} from "/scripts/utilities.js"
 
 const cctFilter: string = ".cct";
 let numberToFind: number;
@@ -8,7 +9,6 @@ export async function main(ns: NS): Promise<void> {
     getSearchLimit(ns);
     let found: number = 0;
     let servers: Array<Server> = getServers(ns);
-    let solvableTypes: Array<CodingContractTypes> = getSolvableCodingContractTypes();
 
     for (let server of servers) {
         var files = ns.ls(server.hostname, cctFilter);
@@ -16,7 +16,7 @@ export async function main(ns: NS): Promise<void> {
 
         for(let file of files) {
             let contract: CodingContractInfo = getCodingContract(ns, file, server.hostname);
-            let solvable: boolean = solvableTypes.includes(contract.type);
+            let solvable: boolean = hasSolver(contract.type);
 
             ns.print(file);
             ns.tprint(`[${server.hostname}] ${file} (${contract.type}) {Solution Implemented: ${solvable}}`);

@@ -2,15 +2,17 @@ import {BitBurner as NS, CodingContractTypes, Host, Script} from "Bitburner"
 import {CodingContractInfo, getCodingContract} from "/scripts/utilities.js"
 
 let contract: CodingContractInfo;
-let solvers: Map<CodingContractTypes, Function>;
 
 export async function main(ns: NS): Promise<void> {
     let filename: Script = ns.args[0];
     let hostname: Host = ns.args[1];
     // TODO: Check whether hostname and filename are valid
     contract = getCodingContract(ns, filename, hostname);
-    loadSolvers();
     runSolver(ns);
+}
+
+export function hasSolver(type: CodingContractTypes) {
+    return solvers[type] != null;
 }
 
 function printStatus(ns: NS, status: string): void {
@@ -25,32 +27,14 @@ function printStatus(ns: NS, status: string): void {
     ns.print(status);
 }
 
-function loadSolvers(): void {
-    // solvers.set("Find Largest Prime Factor", null);
-    solvers.set("Subarray with Maximum Sum", SubarrayWithMaximumSum_Setup);
-    // solvers.set("Total Ways to Sum", null);
-    solvers.set("Spiralize Matrix", SpiralizeMatrix_Setup);
-    solvers.set("Array Jumping Game", solveArrayJumpingGame_Setup);
-    // solvers.set("Merge Overlapping Intervals", null);
-    // solvers.set("Generate IP Addresses", null);
-    // solvers.set("Algorithmic Stock Trader I", null);
-    // solvers.set("Algorithmic Stock Trader II", null);
-    // solvers.set("Algorithmic Stock Trader III", null);
-    // solvers.set("Algorithmic Stock Trader IV", null);
-    solvers.set("Minimum Path Sum in a Triangle", MinimumPathSumInATriangle_Setup);
-    // solvers.set("Unique Paths in a Grid I", null);
-    solvers.set("Unique Paths in a Grid II", UniquePathsInAGridII_Setup);
-    // solvers.set("Sanitize Parentheses in Expression", null);
-    // solvers.set("Find All Valid Math Expressions", null);
-}
-
 function runSolver(ns: NS): void {
     printStatus(ns, "Selecting solver...");
-    if (solvers.has(contract.type)) {
-        let answer: string = solvers[contract.type](contract.data);
+    if (solvers[contract.type] != null) {
+        let answer: string = solvers[contract.type](ns, contract.data);
         printStatus(ns, `Answer is: ${answer}`);
         let rewardMessage = contract.attempt(ns, answer);
         printStatus(ns, rewardMessage);
+        ns.tprint(rewardMessage);
     }
     else {
         printStatus(ns, `Solver has not been implemented yet for: ${contract.type}`);
@@ -190,7 +174,7 @@ type SpiralizeMatrix_Args = {
     progress: Function,
 }
 
-let solveArrayJumpingGame_Setup: Function = function (ns: NS, data: any): number {
+let SolveArrayJumpingGame_Setup: Function = function (ns: NS, data: any): number {
     let args: ArrayJumpingGame_Args = {
         maxValue: -1,
     };
@@ -223,7 +207,7 @@ type ArrayJumpingGame_Args = {
     maxValue: number,
 }
 
-let MinimumPathSumInATriangle_Setup: Function = function (ns: NS, data: any): number {
+let MinimumPathSumInATriangle_Setup: Function = function MinimumPathSumInATriangle_Setup(ns: NS, data: any): number {
     let args: MinimumPathSumInATriangle_Args = {
         minValue: 0,
         depthValue: -1,
@@ -261,7 +245,7 @@ type MinimumPathSumInATriangle_Args = {
     depthValue: number,
 }
 
-let UniquePathsInAGridII_Setup: Function = function (ns: NS, data: any): number {
+let UniquePathsInAGridII_Setup: Function = function UniquePathsInAGridII_Setup(ns: NS, data: any): number {
     let bottom: number = data.length - 1;
     let right: number = data[0].length - 1;
 
@@ -314,3 +298,22 @@ type UniquePathsInAGrid_Args = {
     updateClosest: Function,
     status: Function,
 }
+
+let solvers: Object = {
+    "Find Largest Prime Factor": null,
+    "Subarray with Maximum Sum": SubarrayWithMaximumSum_Setup,
+    "Total Ways to Sum": null,
+    "Spiralize Matrix": SpiralizeMatrix_Setup,
+    "Array Jumping Game": SolveArrayJumpingGame_Setup,
+    "Merge Overlapping Intervals": null,
+    "Generate IP Addresses": null,
+    "Algorithmic Stock Trader I": null,
+    "Algorithmic Stock Trader II": null,
+    "Algorithmic Stock Trader III": null,
+    "Algorithmic Stock Trader IV": null,
+    "Minimum Path Sum in a Triangle": MinimumPathSumInATriangle_Setup,
+    "Unique Paths in a Grid I": null,
+    "Unique Paths in a Grid II": UniquePathsInAGridII_Setup,
+    "Sanitize Parentheses in Expression": null,
+    "Find All Valid Math Expressions": null,
+};

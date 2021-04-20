@@ -10,17 +10,6 @@ export function getServers(ns: NS): Array<Server> {
     return servers;
 }
 
-export function getSolvableCodingContractTypes(): Array<CodingContractTypes> {
-    let solvableContractTypes: Array<CodingContractTypes> = [
-        "Array Jumping Game",
-        "Minimum Path Sum in a Triangle",
-        "Spiralize Matrix",
-        "Subarray with Maximum Sum",
-        "Unique Paths in a Grid II",
-    ];
-    return solvableContractTypes;
-}
-
 export function getCodingContract(ns: NS, filename: Script, hostname: Host): CodingContractInfo {
     let contract: CodingContractInfo = {
         hostname: hostname,

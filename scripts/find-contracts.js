@@ -1,17 +1,17 @@
-import { getServers, getSolvableCodingContractTypes, getCodingContract } from "/scripts/utilities.js";
+import { hasSolver } from "./contract-solver";
+import { getServers, getCodingContract } from "/scripts/utilities.js";
 const cctFilter = ".cct";
 let numberToFind;
 export async function main(ns) {
     getSearchLimit(ns);
     let found = 0;
     let servers = getServers(ns);
-    let solvableTypes = getSolvableCodingContractTypes();
     for (let server of servers) {
         var files = ns.ls(server.hostname, cctFilter);
         ns.print(files.length + " contract(s) found:");
         for (let file of files) {
             let contract = getCodingContract(ns, file, server.hostname);
-            let solvable = solvableTypes.includes(contract.type);
+            let solvable = hasSolver(contract.type);
             ns.print(file);
             ns.tprint(`[${server.hostname}] ${file} (${contract.type}) {Solution Implemented: ${solvable}}`);
             if (numberToFind != -1) {

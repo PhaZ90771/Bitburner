@@ -1,12 +1,13 @@
 import { getCodingContract } from "/scripts/utilities.js";
 let contract;
-let solvers;
 export async function main(ns) {
     let filename = ns.args[0];
     let hostname = ns.args[1];
     contract = getCodingContract(ns, filename, hostname);
-    loadSolvers();
     runSolver(ns);
+}
+export function hasSolver(type) {
+    return solvers[type] != null;
 }
 function printStatus(ns, status) {
     ns.clearLog();
@@ -16,20 +17,14 @@ function printStatus(ns, status) {
     ns.print("/status/");
     ns.print(status);
 }
-function loadSolvers() {
-    solvers.set("Subarray with Maximum Sum", SubarrayWithMaximumSum_Setup);
-    solvers.set("Spiralize Matrix", SpiralizeMatrix_Setup);
-    solvers.set("Array Jumping Game", solveArrayJumpingGame_Setup);
-    solvers.set("Minimum Path Sum in a Triangle", MinimumPathSumInATriangle_Setup);
-    solvers.set("Unique Paths in a Grid II", UniquePathsInAGridII_Setup);
-}
 function runSolver(ns) {
     printStatus(ns, "Selecting solver...");
-    if (solvers.has(contract.type)) {
-        let answer = solvers[contract.type](contract.data);
+    if (solvers[contract.type] != null) {
+        let answer = solvers[contract.type](ns, contract.data);
         printStatus(ns, `Answer is: ${answer}`);
         let rewardMessage = contract.attempt(ns, answer);
         printStatus(ns, rewardMessage);
+        ns.tprint(rewardMessage);
     }
     else {
         printStatus(ns, `Solver has not been implemented yet for: ${contract.type}`);
@@ -145,7 +140,7 @@ function SpiralizeMatrix_Solve(ns, data, args) {
     }
     return ret;
 }
-let solveArrayJumpingGame_Setup = function (ns, data) {
+let SolveArrayJumpingGame_Setup = function (ns, data) {
     let args = {
         maxValue: -1,
     };
@@ -174,7 +169,7 @@ function solveArrayJumpingGame_Solve(ns, data, pos, args) {
     }
     return 0;
 }
-let MinimumPathSumInATriangle_Setup = function (ns, data) {
+let MinimumPathSumInATriangle_Setup = function MinimumPathSumInATriangle_Setup(ns, data) {
     let args = {
         minValue: 0,
         depthValue: -1,
@@ -203,7 +198,7 @@ function MinimumPathSumInATriangle_Solve(ns, data, x, y, sum, args) {
         return right;
     }
 }
-let UniquePathsInAGridII_Setup = function (ns, data) {
+let UniquePathsInAGridII_Setup = function UniquePathsInAGridII_Setup(ns, data) {
     let bottom = data.length - 1;
     let right = data[0].length - 1;
     if (data[0][0] == 1)
@@ -250,3 +245,21 @@ function UniquePathsInAGrid_Solve(ns, data, x, y, args) {
     sum += UniquePathsInAGrid_Solve(ns, data, x + 1, y, args);
     return sum;
 }
+let solvers = {
+    "Find Largest Prime Factor": null,
+    "Subarray with Maximum Sum": SubarrayWithMaximumSum_Setup,
+    "Total Ways to Sum": null,
+    "Spiralize Matrix": SpiralizeMatrix_Setup,
+    "Array Jumping Game": SolveArrayJumpingGame_Setup,
+    "Merge Overlapping Intervals": null,
+    "Generate IP Addresses": null,
+    "Algorithmic Stock Trader I": null,
+    "Algorithmic Stock Trader II": null,
+    "Algorithmic Stock Trader III": null,
+    "Algorithmic Stock Trader IV": null,
+    "Minimum Path Sum in a Triangle": MinimumPathSumInATriangle_Setup,
+    "Unique Paths in a Grid I": null,
+    "Unique Paths in a Grid II": UniquePathsInAGridII_Setup,
+    "Sanitize Parentheses in Expression": null,
+    "Find All Valid Math Expressions": null,
+};

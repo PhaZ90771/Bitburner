@@ -6,16 +6,6 @@ export function getServers(ns) {
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
 }
-export function getSolvableCodingContractTypes() {
-    let solvableContractTypes = [
-        "Array Jumping Game",
-        "Minimum Path Sum in a Triangle",
-        "Spiralize Matrix",
-        "Subarray with Maximum Sum",
-        "Unique Paths in a Grid II",
-    ];
-    return solvableContractTypes;
-}
 export function getCodingContract(ns, filename, hostname) {
     let contract = {
         hostname: hostname,
