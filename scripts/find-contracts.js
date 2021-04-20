@@ -1,4 +1,4 @@
-import { hasSolver } from "/scripts/contract-solver";
+import { hasSolver } from "/scripts/contract-solver.js";
 import { getServers, getCodingContract } from "/scripts/utilities.js";
 const cctFilter = ".cct";
 let numberToFind;
