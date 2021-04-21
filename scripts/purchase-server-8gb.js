@@ -6,16 +6,12 @@ const script = "/scripts/autohack-target.js";
 export async function main(ns) {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
+    ns.disableLog("sleep");
     let serverLimit = ns.getPurchasedServerLimit();
     let purchasedServerHostnames = ns.getPurchasedServers();
-    let nextServerCost = ns.getPurchasedServerCost(ram);
-    for (let i = 0; i < purchasedServerHostnames.length; i++) {
-        let server = getServer(ns, purchasedServerHostnames[i]);
-        setup(ns, server);
-    }
+    setupAll(ns, purchasedServerHostnames);
     while (purchasedServerHostnames.length < serverLimit) {
-        let money = getMoney(ns);
-        if (money <= nextServerCost) {
+        if (needForPurchase(ns) <= 0 && ) {
             let hostname = ns.purchaseServer(`${prefix()}-${purchasedServerHostnames.length}`, ram);
             if (hostname !== "") {
                 purchasedServerHostnames = ns.getPurchasedServers();
@@ -37,8 +33,26 @@ export async function main(ns) {
         await ns.sleep(1);
     }
 }
+function purchaseServer(ns) {
+    let hostname = ns.purchaseServer(`${prefix()}-${purchasedServerHostnames.length}`, ram);
+    if (hostname !== "") {
+        let server = getServer(ns, hostname);
+        ns.print(`New server purchased: ${server.hostname}`);
+        setup(ns, server);
+        return true;
+    }
+    return false;
+}
+function setupAll(ns, servers) {
+    servers.forEach(server => setup(ns, server));
+}
 function setup(ns, server) {
     ns.killall(server.hostname);
     ns.scp(script, server.hostname);
     ns.exec(script, server.hostname, 3, target);
+}
+function needForPurchase(ns) {
+    let money = getMoney(ns);
+    let cost = ns.getPurchasedServerCost(ram);
+    return cost - money;
 }
