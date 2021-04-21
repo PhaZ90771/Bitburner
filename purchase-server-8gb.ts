@@ -39,6 +39,7 @@ function purchaseServer(ns: NS): boolean {
     let hostname: Host = ns.purchaseServer(`${prefix()}-${servers.length}`, ram);
     if (hostname !== "") {
         let server: Server = getServer(ns, hostname);
+        servers.push(server);
         ns.print(`New server purchased: ${server.hostname}`);
         setup(ns, server);
         return true;
