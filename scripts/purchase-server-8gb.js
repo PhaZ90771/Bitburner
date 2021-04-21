@@ -3,38 +3,31 @@ import { getMoney, getServer } from "/scripts/utilities.js";
 const ram = 8;
 const target = "foodnstuff";
 const script = "/scripts/autohack-target.js";
+let maxServers;
+let servers;
 export async function main(ns) {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
-    let serverLimit = ns.getPurchasedServerLimit();
-    let purchasedServerHostnames = ns.getPurchasedServers();
-    setupAll(ns, purchasedServerHostnames);
-    while (purchasedServerHostnames.length < serverLimit) {
-        if (needForPurchase(ns) <= 0 && ) {
-            let hostname = ns.purchaseServer(`${prefix()}-${purchasedServerHostnames.length}`, ram);
-            if (hostname !== "") {
-                purchasedServerHostnames = ns.getPurchasedServers();
-                nextServerCost = ns.getPurchasedServerCost(ram);
-                let server = getServer(ns, hostname);
-                ns.print(`New server purchased: ${server.hostname}`);
-                setup(ns, server);
-            }
-            else {
-                money = getMoney(ns);
-                let need = nextServerCost - money;
-                ns.print(`Need $${need} for next server`);
-            }
-        }
-        else {
-            let need = nextServerCost - money;
-            ns.print(`Need $${need} for next server`);
+    maxServers = ns.getPurchasedServerLimit();
+    servers = getPurchasedServers(ns);
+    setupAll(ns, servers);
+    while (servers.length < maxServers) {
+        if (moneyNeedForNextServer(ns) > 0 || !purchaseServer(ns)) {
+            let moneyNeeded = ns.nFormat(moneyNeedForNextServer(ns), "$0.000a");
+            ns.print(`Need $${moneyNeeded} for next server`);
         }
         await ns.sleep(1);
     }
 }
+function getPurchasedServers(ns) {
+    let hostnames = ns.getPurchasedServers();
+    let servers = [];
+    hostnames.forEach(hostname => servers.push(getServer(ns, hostname)));
+    return servers;
+}
 function purchaseServer(ns) {
-    let hostname = ns.purchaseServer(`${prefix()}-${purchasedServerHostnames.length}`, ram);
+    let hostname = ns.purchaseServer(`${prefix()}-${servers.length}`, ram);
     if (hostname !== "") {
         let server = getServer(ns, hostname);
         ns.print(`New server purchased: ${server.hostname}`);
@@ -51,7 +44,7 @@ function setup(ns, server) {
     ns.scp(script, server.hostname);
     ns.exec(script, server.hostname, 3, target);
 }
-function needForPurchase(ns) {
+function moneyNeedForNextServer(ns) {
     let money = getMoney(ns);
     let cost = ns.getPurchasedServerCost(ram);
     return cost - money;
