@@ -226,7 +226,7 @@ async function homeStartup(ns: NS): Promise<void> {
         ns.exit();
     }
 
-    ns.run(pservAutobuyScript);
+    ns.run(pservAutobuyScript, 1, script, target);
     ns.print("Autobuy pserv setup success");
     
     ns.run(hacknetAutobuyScript);

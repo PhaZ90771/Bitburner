@@ -209,7 +209,7 @@ async function homeStartup(ns) {
     if (ns.ps(home).length > 1) {
         ns.exit();
     }
-    ns.run(pservAutobuyScript);
+    ns.run(pservAutobuyScript, 1, script, target);
     ns.print("Autobuy pserv setup success");
     ns.run(hacknetAutobuyScript);
     ns.print("Autobuy nodes setup success");

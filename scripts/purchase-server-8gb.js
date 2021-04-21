@@ -1,14 +1,15 @@
 import { getServerPrefix as prefix } from "/scripts/import.js";
 import { getMoney, getServer } from "/scripts/utilities.js";
 const ram = 8;
-const target = "foodnstuff";
-const script = "/scripts/autohack-target.js";
+let script = "/scripts/autohack-target.js";
+let target = "foodnstuff";
 let maxServers;
 let servers;
 export async function main(ns) {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
+    getArgs(ns);
     maxServers = ns.getPurchasedServerLimit();
     servers = getPurchasedServers(ns);
     setupAll(ns, servers);
@@ -18,6 +19,18 @@ export async function main(ns) {
             ns.print(`Need $${moneyNeeded} for next server`);
         }
         await ns.sleep(1);
+    }
+}
+function getArgs(ns) {
+    if (ns.args.length > 0) {
+        if (typeof ns.args[0] === "string" && ns.args[0] != "") {
+            script = ns.args[0];
+        }
+    }
+    if (ns.args.length > 1) {
+        if (typeof ns.args[1] === "string" && ns.args[1] != "") {
+            target = ns.args[1];
+        }
     }
 }
 function getPurchasedServers(ns) {

@@ -3,9 +3,9 @@ import {getServerPrefix as prefix} from "/scripts/import.js"
 import {getMoney, Server, getServer} from "/scripts/utilities.js"
 
 const ram: number = 8;
-const target: Host = "foodnstuff";
-const script: Script = "/scripts/autohack-target.js";
 
+let script: Script = "/scripts/autohack-target.js";
+let target: Host = "foodnstuff";
 let maxServers: number;
 let servers: Array<Server>;
 
@@ -13,6 +13,8 @@ export async function main(ns: NS): Promise<void> {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
+
+    getArgs(ns);
 
     maxServers = ns.getPurchasedServerLimit();
     servers = getPurchasedServers(ns);
@@ -25,6 +27,20 @@ export async function main(ns: NS): Promise<void> {
             ns.print(`Need $${moneyNeeded} for next server`);
         }
         await ns.sleep(1);
+    }
+}
+
+function getArgs(ns: NS) {
+    if (ns.args.length > 0) {
+        if (typeof ns.args[0] === "string" && ns.args[0] != "") {
+            script = ns.args[0];
+        }
+    }
+
+    if (ns.args.length > 1) {
+        if (typeof ns.args[1] === "string" && ns.args[1] != "") {
+            target = ns.args[1];
+        }
     }
 }
 
