@@ -1,4 +1,5 @@
-import { getServers, getCodingContract } from "/scripts/utilities.js";
+import { getServers } from "/scripts/utilities.js";
+import { getCodingContract } from "/scripts/contract-solver.js";
 const cctFilter = ".cct";
 export async function main(ns) {
     let contracts = getCodingContracts(ns);

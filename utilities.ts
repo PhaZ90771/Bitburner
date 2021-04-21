@@ -1,5 +1,4 @@
 import {BitBurner as NS, CodingContractTypes, CodingAttemptOptions, Host, Script} from "Bitburner"
-import {hasSolver} from "/scripts/contract-solver.js";
 
 export function getMoney(ns: NS): number {
     return ns.getServerMoneyAvailable("home");
@@ -9,32 +8,6 @@ export function getServers(ns: NS): Array<Server> {
     let servers: Array<Server> = [];
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
-}
-
-export function getCodingContract(ns: NS, filename: Script, hostname: Host): CodingContractInfo {
-    let contract: CodingContractInfo = {
-        hostname: hostname,
-        filename: filename,
-        type: ns.codingcontract.getContractType(filename, hostname),
-        description: ns.codingcontract.getDescription(filename, hostname),
-        data: ns.codingcontract.getData(filename, hostname),
-        numTries: function(ns: NS): number {
-            return ns.codingcontract.getNumTriesRemaining(filename, hostname);
-        },
-        attempt: function (ns:NS, answer: any): string {
-            let rewardMessage: string = ns.codingcontract.attempt(answer, filename, hostname, {returnReward: true}).toString();
-            this.solved = rewardMessage !== "";
-            if (!this.solved) {
-                rewardMessage = "Wrong answer"
-            }
-            return rewardMessage;
-        },
-        solved: false,
-        solvable: function (): boolean {
-            return hasSolver(this.type);
-        },
-    };
-    return contract;
 }
 
 function addServer(ns: NS, servers: Array<Server>, hostname: string): void {
@@ -75,18 +48,6 @@ export type Server = {
     ramFree: Function,
     ramUsed: Function,
     securityMin: number,
-}
-
-export type CodingContractInfo = {
-    hostname: Host,
-    filename: Script,
-    type: CodingContractTypes,
-    description: string,
-    data: any,
-    numTries: Function,
-    attempt: Function,
-    solved: boolean,
-    solvable: Function,
 }
 
 let hostnames: Array<string> = [

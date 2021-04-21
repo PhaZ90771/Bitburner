@@ -1,4 +1,3 @@
-import { hasSolver } from "/scripts/contract-solver.js";
 export function getMoney(ns) {
     return ns.getServerMoneyAvailable("home");
 }
@@ -6,31 +5,6 @@ export function getServers(ns) {
     let servers = [];
     hostnames.forEach(hostname => addServer(ns, servers, hostname));
     return servers;
-}
-export function getCodingContract(ns, filename, hostname) {
-    let contract = {
-        hostname: hostname,
-        filename: filename,
-        type: ns.codingcontract.getContractType(filename, hostname),
-        description: ns.codingcontract.getDescription(filename, hostname),
-        data: ns.codingcontract.getData(filename, hostname),
-        numTries: function (ns) {
-            return ns.codingcontract.getNumTriesRemaining(filename, hostname);
-        },
-        attempt: function (ns, answer) {
-            let rewardMessage = ns.codingcontract.attempt(answer, filename, hostname, { returnReward: true }).toString();
-            this.solved = rewardMessage !== "";
-            if (!this.solved) {
-                rewardMessage = "Wrong answer";
-            }
-            return rewardMessage;
-        },
-        solved: false,
-        solvable: function () {
-            return hasSolver(this.type);
-        },
-    };
-    return contract;
 }
 function addServer(ns, servers, hostname) {
     if (ns.serverExists(hostname)) {

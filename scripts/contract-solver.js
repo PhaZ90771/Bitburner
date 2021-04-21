@@ -1,9 +1,33 @@
-import { getCodingContract } from "/scripts/utilities.js";
 export async function main(ns) {
     let filename = ns.args[0];
     let hostname = ns.args[1];
     let contract = getCodingContract(ns, filename, hostname);
     runSolver(ns, contract);
+}
+export function getCodingContract(ns, filename, hostname) {
+    let contract = {
+        hostname: hostname,
+        filename: filename,
+        type: ns.codingcontract.getContractType(filename, hostname),
+        description: ns.codingcontract.getDescription(filename, hostname),
+        data: ns.codingcontract.getData(filename, hostname),
+        numTries: function (ns) {
+            return ns.codingcontract.getNumTriesRemaining(filename, hostname);
+        },
+        attempt: function (ns, answer) {
+            let rewardMessage = ns.codingcontract.attempt(answer, filename, hostname, { returnReward: true }).toString();
+            this.solved = rewardMessage !== "";
+            if (!this.solved) {
+                rewardMessage = "Wrong answer";
+            }
+            return rewardMessage;
+        },
+        solved: false,
+        solvable: function () {
+            return hasSolver(this.type);
+        },
+    };
+    return contract;
 }
 export function hasSolver(type) {
     return solvers[type] != null;

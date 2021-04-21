@@ -1,5 +1,4 @@
 import {BitBurner as NS, CodingContractTypes, Host, Script} from "Bitburner"
-import {CodingContractInfo, getCodingContract} from "/scripts/utilities.js"
 
 export async function main(ns: NS): Promise<void> {
     let filename: Script = ns.args[0];
@@ -7,6 +6,44 @@ export async function main(ns: NS): Promise<void> {
     // TODO: Check whether hostname and filename are valid
     let contract: CodingContractInfo = getCodingContract(ns, filename, hostname);
     runSolver(ns, contract);
+}
+
+export function getCodingContract(ns: NS, filename: Script, hostname: Host): CodingContractInfo {
+    let contract: CodingContractInfo = {
+        hostname: hostname,
+        filename: filename,
+        type: ns.codingcontract.getContractType(filename, hostname),
+        description: ns.codingcontract.getDescription(filename, hostname),
+        data: ns.codingcontract.getData(filename, hostname),
+        numTries: function(ns: NS): number {
+            return ns.codingcontract.getNumTriesRemaining(filename, hostname);
+        },
+        attempt: function (ns:NS, answer: any): string {
+            let rewardMessage: string = ns.codingcontract.attempt(answer, filename, hostname, {returnReward: true}).toString();
+            this.solved = rewardMessage !== "";
+            if (!this.solved) {
+                rewardMessage = "Wrong answer"
+            }
+            return rewardMessage;
+        },
+        solved: false,
+        solvable: function (): boolean {
+            return hasSolver(this.type);
+        },
+    };
+    return contract;
+}
+
+export type CodingContractInfo = {
+    hostname: Host,
+    filename: Script,
+    type: CodingContractTypes,
+    description: string,
+    data: any,
+    numTries: Function,
+    attempt: Function,
+    solved: boolean,
+    solvable: Function,
 }
 
 export function hasSolver(type: CodingContractTypes) {

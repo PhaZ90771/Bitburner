@@ -1,6 +1,6 @@
-import {BitBurner as NS, CodingContract, CodingContractTypes} from "Bitburner"
-import {hasSolver} from "/scripts/contract-solver.js";
-import {getServers, Server, getCodingContract, CodingContractInfo} from "/scripts/utilities.js"
+import {BitBurner as NS} from "Bitburner"
+import {getServers, Server} from "/scripts/utilities.js"
+import {getCodingContract, CodingContractInfo} from "/scripts/contract-solver.js"
 
 const cctFilter: string = ".cct";
 
