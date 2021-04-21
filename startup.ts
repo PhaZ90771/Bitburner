@@ -48,13 +48,15 @@ export async function main(ns: NS): Promise<void> {
 }
 
 function getArgs(ns: NS) {
-    if (ns.args.length) {
+    if (ns.args.length > 0) {
         if (typeof ns.args[0] === "string") {
             xpFocus = ns.args[0] === "true";
         }
         let focus: string = xpFocus ? "XP" : "Money";
         ns.tprint(`Startup focus is on ${focus}`);
-        
+    }
+
+    if (ns.args.length > 1) {        
         if (typeof ns.args[1] === "number" && ns.args[1] >= 0) {
             homeRamSetAside = ns.args[1];
             ns.tprint(`Setting aside at least ${homeRamSetAside}GB of ram on home system`);
