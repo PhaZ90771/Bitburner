@@ -64,7 +64,7 @@ function purchaseServer(ns, targetHostname, ram) {
     let money = getMoney(ns);
     let cost = ns.getPurchasedServerCost(ram);
     let need = cost - money;
-    if (need <= 0 || ns.purchaseServer(targetHostname, ram) === "") {
+    if (need > 0 || ns.purchaseServer(targetHostname, ram) === "") {
         let needString = ns.nFormat(need, "$0.000a");
         ns.print(`Server purchase failed, need an additional $${needString}`);
         return false;
