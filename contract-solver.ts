@@ -122,7 +122,7 @@ let SpiralizeMatrix_Setup: Function = function (ns: NS, contract: CodingContract
             return ns.nFormat(this.current / this.max, "0.0%");
         },
     }
-    return SpiralizeMatrix_Solve(ns, contract.data, args);
+    return SpiralizeMatrix_Solve(ns, contract, args);
 }
 function SpiralizeMatrix_Solve(ns: NS, contract: CodingContractInfo, args: SpiralizeMatrix_Args): Array<number>  {
     let ret: Array<number> = [];

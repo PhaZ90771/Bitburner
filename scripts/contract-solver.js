@@ -90,7 +90,7 @@ let SpiralizeMatrix_Setup = function (ns, contract) {
             return ns.nFormat(this.current / this.max, "0.0%");
         },
     };
-    return SpiralizeMatrix_Solve(ns, contract.data, args);
+    return SpiralizeMatrix_Solve(ns, contract, args);
 };
 function SpiralizeMatrix_Solve(ns, contract, args) {
     let ret = [];
