@@ -19,7 +19,7 @@ export async function main(ns) {
                 servers[i] = getServer(ns, newHostname);
             }
             if (upgraded || initialPass) {
-                setup(ns, servers[i]);
+                await setup(ns, servers[i]);
             }
         }
         initialPass = false;
@@ -29,7 +29,7 @@ export async function main(ns) {
             if (success) {
                 let newServer = getServer(ns, targetHostname);
                 servers.push(newServer);
-                setup(ns, newServer);
+                await setup(ns, newServer);
             }
             await ns.sleep(1);
         }
@@ -72,10 +72,16 @@ function purchaseServer(ns, targetHostname, ram) {
     ns.print(`Server purchase success`);
     return true;
 }
-function setup(ns, server) {
-    ns.killall(server.hostname);
+async function setup(ns, server) {
     ns.scp(script, server.hostname);
-    ns.exec(script, server.hostname, 3, target);
+    ns.killall(server.hostname);
+    while (ns.ps(server.hostname).length > 0) {
+        await ns.sleep(1);
+    }
+    let ram = server.ramFree(ns);
+    let needed = ns.getScriptRam(script);
+    let threads = Math.floor(ram / needed);
+    ns.exec(script, server.hostname, threads, target);
 }
 function upgradeServer(ns, server) {
     let index = getIndexFromHostname(server.hostname);
