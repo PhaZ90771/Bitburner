@@ -55,7 +55,7 @@ function getPurchasedServers(ns) {
     return servers;
 }
 function generateHostname(index, ram) {
-    return `${prefix()}-${index}-${ram}GB}`;
+    return `${prefix()}-${index}-${ram}GB`;
 }
 function getIndexFromHostname(hostname) {
     return parseInt(hostname.split("-")[1], 10);
@@ -63,9 +63,10 @@ function getIndexFromHostname(hostname) {
 function purchaseServer(ns, targetHostname, ram) {
     let money = getMoney(ns);
     let cost = ns.getPurchasedServerCost(ram);
-    if (cost > money || ns.purchaseServer(targetHostname, ram) === "") {
-        let need = ns.nFormat(cost - money, "$0.000a");
-        ns.print(`Server purchase failed, need an additional $${need}`);
+    let need = cost - money;
+    if (need <= 0 || ns.purchaseServer(targetHostname, ram) === "") {
+        let needString = ns.nFormat(need, "$0.000a");
+        ns.print(`Server purchase failed, need an additional $${needString}`);
         return false;
     }
     ns.print(`Server purchase success`);
@@ -84,6 +85,7 @@ function upgradeServer(ns, server) {
     let cost = ns.getPurchasedServerCost(targetRam);
     if (cost <= money) {
         if (purchaseServer(ns, targetHostname, targetRam)) {
+            ns.killall(server.hostname);
             ns.deleteServer(server.hostname);
             return targetHostname;
         }
