@@ -73,11 +73,11 @@ function findTargets(ns: NS, servers: Array<Server>) {
     weakenTarget = servers[0];
     ns.print(`Server with the lowest min security is: ${weakenTarget.hostname}`);
 
-    // Largest Max Money
+    // Largest Max Money & Hackable & Rooted
     servers.sort((a: Server, b: Server) => b.moneyMax - a.moneyMax);
     let hackingLevel: number = ns.getHackingLevel();
     for (let server of servers) {
-        if (server.hackingRequired <= hackingLevel) {
+        if (server.hackingRequired <= hackingLevel && server.rooted(ns)) {
             hackTarget = server;
             ns.print(`Hackable server with the largest max money is: ${hackTarget.hostname}`);
             return;
@@ -251,7 +251,7 @@ async function killAllOther(ns: NS) {
         filename: ns.getScriptName(),
         threads: 1,
         args: ns.args,
-    }
+    };
     let ps: Array<ProcessInfo> = ns.ps(home);
 
     for(let i: number = 0; i < ps.length; i++) {
@@ -273,7 +273,7 @@ async function killAllOther(ns: NS) {
     ns.print("Other processes killed, proceeding");
 }
 
-async function isSamePS(p1: ProcessInfo, p2: ProcessInfo) {
+function isSamePS(p1: ProcessInfo, p2: ProcessInfo) {
     let sameFilename = p1.filename === p2.filename;
     let sameArgsLength = p1.args.length === p2.args.length;
     let sameArgsValues = p1.args.every((value, index) => value === p2.args[index]);

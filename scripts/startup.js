@@ -56,7 +56,7 @@ function findTargets(ns, servers) {
     servers.sort((a, b) => b.moneyMax - a.moneyMax);
     let hackingLevel = ns.getHackingLevel();
     for (let server of servers) {
-        if (server.hackingRequired <= hackingLevel) {
+        if (server.hackingRequired <= hackingLevel && server.rooted(ns)) {
             hackTarget = server;
             ns.print(`Hackable server with the largest max money is: ${hackTarget.hostname}`);
             return;
@@ -248,7 +248,7 @@ async function killAllOther(ns) {
     }
     ns.print("Other processes killed, proceeding");
 }
-async function isSamePS(p1, p2) {
+function isSamePS(p1, p2) {
     let sameFilename = p1.filename === p2.filename;
     let sameArgsLength = p1.args.length === p2.args.length;
     let sameArgsValues = p1.args.every((value, index) => value === p2.args[index]);
