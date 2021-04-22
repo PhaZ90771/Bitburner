@@ -15,6 +15,7 @@ let filenames: Array<Script> = [
     "find-contracts.js",
     "purchase-hacknet-node.js",
     "purchase-server.js",
+    // "spider.js",
     "startup.js",
     "solve-contracts.js",
     "utilities.js",
