@@ -26,9 +26,9 @@ export async function main(ns: NS): Promise<void> {
 
     servers.sort((a: Server, b: Server) => a.portsRequired - b.portsRequired);
     
-    var lastPortRequirement = -1;
+    let lastPortRequirement: number = -1;
     while (servers.length > 0) {
-        var server = servers.shift();
+        let server: Server = servers.shift()!;
 
         while (countPortHackers(ns) < server!.portsRequired) {
             ns.print("");
@@ -127,7 +127,7 @@ async function takeover(ns: NS, server: Server): Promise<void> {
 
     downloadLitFiles(ns, server);
 
-    var nuked = nukeServer(ns, server);
+    let nuked: boolean = nukeServer(ns, server);
     if (nuked) {
         await setup(ns, server);
         ns.print("Completed server takeover");
@@ -179,17 +179,17 @@ async function setup(ns: NS, server: Server): Promise<void> {
         await ns.sleep(1000);
     }
 
-    var ram = server.ramFree(ns);
+    let ram: number = server.ramFree(ns);
     ns.print(`${ram}GB RAM detected`);
     if (ram === 0) {
         ns.print("Autohack setup skipped");
         return;
     }
 
-    var needed = ns.getScriptRam(script);;
+    let needed: number = ns.getScriptRam(script);
     ns.print(`${needed}GB RAM needed`);
 
-    var threads = Math.floor(ram / needed);
+    let threads: number = Math.floor(ram / needed);
     ns.print(`${threads} autohack thread(s) can be supported`);
 
     if (threads === 0) {
@@ -256,7 +256,7 @@ async function killAllOther(ns: NS) {
 
     for(let i: number = 0; i < ps.length; i++) {
         ns.print(`Looking at ${ps[i].filename}`);
-        var isSame = isSamePS(thisPS, ps[i]);
+        let isSame: boolean = isSamePS(thisPS, ps[i]);
         ns.print(`Is same process? ${isSamePS}`);
         if (isSame) {
             ns.print(`Killing ${ps[i].filename}`);

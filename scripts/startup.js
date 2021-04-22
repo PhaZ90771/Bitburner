@@ -15,9 +15,9 @@ export async function main(ns) {
     findTargets(ns, servers);
     await homeStartup(ns);
     servers.sort((a, b) => a.portsRequired - b.portsRequired);
-    var lastPortRequirement = -1;
+    let lastPortRequirement = -1;
     while (servers.length > 0) {
-        var server = servers.shift();
+        let server = servers.shift();
         while (countPortHackers(ns) < server.portsRequired) {
             ns.print("");
             ns.print(`Waiting for ${nextPortHackerToUnlock(ns)} unlock...`);
@@ -120,7 +120,7 @@ async function takeover(ns, server) {
     ns.print("");
     ns.print(`Server Takeover: ${server.hostname}`);
     downloadLitFiles(ns, server);
-    var nuked = nukeServer(ns, server);
+    let nuked = nukeServer(ns, server);
     if (nuked) {
         await setup(ns, server);
         ns.print("Completed server takeover");
@@ -170,16 +170,15 @@ async function setup(ns, server) {
         ns.print(`${psCount} scripts left running on target system`);
         await ns.sleep(1000);
     }
-    var ram = server.ramFree(ns);
+    let ram = server.ramFree(ns);
     ns.print(`${ram}GB RAM detected`);
     if (ram === 0) {
         ns.print("Autohack setup skipped");
         return;
     }
-    var needed = ns.getScriptRam(script);
-    ;
+    let needed = ns.getScriptRam(script);
     ns.print(`${needed}GB RAM needed`);
-    var threads = Math.floor(ram / needed);
+    let threads = Math.floor(ram / needed);
     ns.print(`${threads} autohack thread(s) can be supported`);
     if (threads === 0) {
         ns.print("Not enough ram on system");
@@ -233,7 +232,7 @@ async function killAllOther(ns) {
     let ps = ns.ps(home);
     for (let i = 0; i < ps.length; i++) {
         ns.print(`Looking at ${ps[i].filename}`);
-        var isSame = isSamePS(thisPS, ps[i]);
+        let isSame = isSamePS(thisPS, ps[i]);
         ns.print(`Is same process? ${isSamePS}`);
         if (isSame) {
             ns.print(`Killing ${ps[i].filename}`);
