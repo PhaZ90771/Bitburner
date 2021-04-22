@@ -84,9 +84,11 @@ function findTargets(ns: NS, servers: Array<Server>) {
         }
     }
     hackTarget = getServer(ns, "foodnstuff");
+    ns.print(`Hackable server defaulted to: ${hackTarget.hostname}`);
 }
 
 function disableLogs(ns: NS): void {
+    ns.disableLog("disableLog");
     ns.disableLog("sleep");
     ns.disableLog("brutessh");
     ns.disableLog("ftpcrack");
@@ -104,6 +106,7 @@ function disableLogs(ns: NS): void {
     ns.disableLog("getServerMaxMoney");
     ns.disableLog("getServerNumPortsRequired");
     ns.disableLog("getServerMinSecurityLevel");
+    ns.disableLog("getHackingLevel");
 }
 
 function countPortHackers(ns: NS): number {
