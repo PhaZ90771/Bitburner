@@ -100,6 +100,10 @@ function disableLogs(ns: NS): void {
     ns.disableLog("run");
     ns.disableLog("exec");
     ns.disableLog("getServerRam");
+    ns.disableLog("getServerRequiredHackingLevel");
+    ns.disableLog("getServerMaxMoney");
+    ns.disableLog("getServerNumPortsRequired");
+    ns.disableLog("getServerMinSecurityLevel");
 }
 
 function countPortHackers(ns: NS): number {
