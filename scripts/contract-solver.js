@@ -227,7 +227,7 @@ async function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
 }
 let UniquePathsInAGridI_Setup = async function (ns, contract) {
     let m = contract.data[0];
-    let n = contract.data[0];
+    let n = contract.data[1];
     let newData = new Array(m).fill(new Array(n).fill(0));
     contract.data = newData;
     return await UniquePathsInAGridII_Setup(ns, contract);

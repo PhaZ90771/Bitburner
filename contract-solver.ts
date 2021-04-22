@@ -286,7 +286,7 @@ type MinimumPathSumInATriangle_Args = {
 
 let UniquePathsInAGridI_Setup: Function = async function (ns: NS, contract: CodingContractInfo): Promise<number> {
     let m: number = contract.data[0];
-    let n: number = contract.data[0];
+    let n: number = contract.data[1];
     let newData = new Array(m).fill(new Array<number>(n).fill(0));
     contract.data = newData;
 
