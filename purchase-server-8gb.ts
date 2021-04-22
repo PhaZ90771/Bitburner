@@ -2,35 +2,49 @@ import {BitBurner as NS, Host, Script} from "Bitburner"
 import {getServerPrefix as prefix} from "/scripts/import.js"
 import {getMoney, Server, getServer} from "/scripts/utilities.js"
 
-const ram: number = 8;
+const defaultRam: number = 8;
 
 let script: Script = "/scripts/autohack-target.js";
 let target: Host = "foodnstuff";
-let maxServers: number;
-let servers: Array<Server>;
 
 export async function main(ns: NS): Promise<void> {
     ns.disableLog("getServerMoneyAvailable");
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
 
+    let maxServers: number = ns.getPurchasedServerLimit() - 1;
     getArgs(ns);
+    let servers: Array<Server> = getPurchasedServers(ns);
+    let initialPass: boolean = true;
 
-    maxServers = ns.getPurchasedServerLimit();
-    servers = getPurchasedServers(ns);
+    while(true) {
+        for (let i: number = 0; i < servers.length; i++)  {
+            let newHostname: string = upgradeServer(ns, servers[i]);
+            let upgraded: boolean = newHostname !== "";
+            if (upgraded) {
+                servers[i] = getServer(ns, newHostname);
+            }
+            if (upgraded || initialPass) {
+                setup(ns, servers[i]);
+            }
+        }
+        initialPass = false;
 
-    setupAll(ns, servers);
-
-    while (servers.length < maxServers) {
-        if (moneyNeedForNextServer(ns) > 0 || !purchaseServer(ns)) {
-            let moneyNeeded: string = ns.nFormat(moneyNeedForNextServer(ns), "$0.000a");
-            ns.print(`Need $${moneyNeeded} for next server`);
+        while (servers.length < maxServers) {
+            let targetHostname = generateHostname(servers.length, defaultRam);
+            let success = purchaseServer(ns, targetHostname, defaultRam);
+            if (success) {
+                let newServer = getServer(ns, targetHostname);
+                servers.push(newServer);
+                setup(ns, newServer);
+            }
+            await ns.sleep(1);
         }
         await ns.sleep(1);
     }
 }
 
-function getArgs(ns: NS) {
+function getArgs(ns: NS): void {
     if (ns.args.length > 0) {
         if (typeof ns.args[0] === "string" && ns.args[0] != "") {
             script = ns.args[0];
@@ -44,27 +58,31 @@ function getArgs(ns: NS) {
     }
 }
 
-function getPurchasedServers(ns: NS) {
+function getPurchasedServers(ns: NS): Array<Server> {
     let hostnames: Array<Host> = ns.getPurchasedServers();
     let servers: Array<Server> = [];
     hostnames.forEach(hostname => servers.push(getServer(ns, hostname)));
     return servers;
 }
 
-function purchaseServer(ns: NS): boolean {
-    let hostname: Host = ns.purchaseServer(`${prefix()}-${servers.length}`, ram);
-    if (hostname !== "") {
-        let server: Server = getServer(ns, hostname);
-        servers.push(server);
-        ns.print(`New server purchased: ${server.hostname}`);
-        setup(ns, server);
-        return true;
-    }
-    return false;
+function generateHostname(index: number, ram: number): string {
+    return `${prefix()}-${index}-${ram}GB}`;
 }
 
-function setupAll(ns: NS, servers: Array<Server>): void {
-    servers.forEach(server => setup(ns, server));
+function getIndexFromHostname(hostname: string) {
+    return parseInt(hostname.split("-")[1], 10);
+}
+
+function purchaseServer(ns: NS, targetHostname: Host, ram: number): boolean {
+    let money: number = getMoney(ns);
+    let cost: number = ns.getPurchasedServerCost(ram);
+    if (cost > money || ns.purchaseServer(targetHostname, ram) === "") {
+        let need: string = ns.nFormat(cost - money, "$0.000a");
+        ns.print(`Server purchase failed, need an additional $${need}`);
+        return false;
+    }
+    ns.print(`Server purchase success`);
+    return true;
 }
 
 function setup(ns: NS, server: Server): void {
@@ -73,8 +91,17 @@ function setup(ns: NS, server: Server): void {
     ns.exec(script, server.hostname, 3, target);
 }
 
-function moneyNeedForNextServer(ns: NS) {
-    let money = getMoney(ns);
-    let cost = ns.getPurchasedServerCost(ram);
-    return cost - money;
+function upgradeServer(ns: NS, server: Server) {
+    let index: number = getIndexFromHostname(server.hostname);
+    let targetRam: number = server.ram * 2;
+    let targetHostname: string = generateHostname(index, targetRam);
+    let money: number = getMoney(ns);
+    let cost: number = ns.getPurchasedServerCost(targetRam);
+    if (cost <= money) {
+        if (purchaseServer(ns, targetHostname, targetRam)) {
+            ns.deleteServer(server.hostname);
+            return targetHostname;
+        }
+    }
+    return "";
 }
