@@ -242,7 +242,7 @@ type ArrayJumpingGame_Args = {
     maxValue: number,
 }
 
-let MinimumPathSumInATriangle_Setup: Function = function MinimumPathSumInATriangle_Setup(ns: NS, contract: CodingContractInfo): number {
+let MinimumPathSumInATriangle_Setup: Function = function (ns: NS, contract: CodingContractInfo): number {
     let args: MinimumPathSumInATriangle_Args = {
         minValue: 0,
         depthValue: -1,
@@ -280,7 +280,15 @@ type MinimumPathSumInATriangle_Args = {
     depthValue: number,
 }
 
-let UniquePathsInAGridII_Setup: Function = function UniquePathsInAGridII_Setup(ns: NS, contract: CodingContractInfo): number {
+let UniquePathsInAGridI_Setup: Function = function (ns: NS, contract: CodingContractInfo): number {
+    let m: number = contract.data[0];
+    let n: number = contract.data[0];
+    let newData = new Array(m).fill(new Array<number>(n).fill(0));
+    contract.data = newData;
+
+    return UniquePathsInAGridII_Setup(ns, contract)
+}
+let UniquePathsInAGridII_Setup: Function = function (ns: NS, contract: CodingContractInfo): number {
     let bottom: number = contract.data.length - 1;
     let right: number = contract.data[0].length - 1;
 

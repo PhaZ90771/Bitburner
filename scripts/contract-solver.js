@@ -192,7 +192,7 @@ function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
     }
     return 0;
 }
-let MinimumPathSumInATriangle_Setup = function MinimumPathSumInATriangle_Setup(ns, contract) {
+let MinimumPathSumInATriangle_Setup = function (ns, contract) {
     let args = {
         minValue: 0,
         depthValue: -1,
@@ -221,7 +221,14 @@ function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
         return right;
     }
 }
-let UniquePathsInAGridII_Setup = function UniquePathsInAGridII_Setup(ns, contract) {
+let UniquePathsInAGridI_Setup = function (ns, contract) {
+    let m = contract.data[0];
+    let n = contract.data[0];
+    let newData = new Array(m).fill(new Array(n).fill(0));
+    contract.data = newData;
+    return UniquePathsInAGridII_Setup(ns, contract);
+};
+let UniquePathsInAGridII_Setup = function (ns, contract) {
     let bottom = contract.data.length - 1;
     let right = contract.data[0].length - 1;
     if (contract.data[0][0] == 1)
