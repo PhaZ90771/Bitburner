@@ -71,6 +71,9 @@ function findTargets(ns: NS, servers: Array<Server>) {
     // Lowest Min Security
     servers.sort((a: Server, b: Server) => a.securityMin - b.securityMin);
     weakenTarget = servers[0];
+    if (!weakenTarget.rooted(ns)) {
+        takeover(ns, weakenTarget);
+    }
     ns.print(`Server with the lowest min security is: ${weakenTarget.hostname}`);
 
     // Largest Max Money & Hackable & Rooted
@@ -84,6 +87,9 @@ function findTargets(ns: NS, servers: Array<Server>) {
         }
     }
     hackTarget = getServer(ns, "foodnstuff");
+    if (!hackTarget.rooted(ns)) {
+        takeover(ns, hackTarget);
+    }
     ns.print(`Hackable server defaulted to: ${hackTarget.hostname}`);
 }
 

@@ -52,6 +52,9 @@ function getArgs(ns) {
 function findTargets(ns, servers) {
     servers.sort((a, b) => a.securityMin - b.securityMin);
     weakenTarget = servers[0];
+    if (!weakenTarget.rooted(ns)) {
+        takeover(ns, weakenTarget);
+    }
     ns.print(`Server with the lowest min security is: ${weakenTarget.hostname}`);
     servers.sort((a, b) => b.moneyMax - a.moneyMax);
     let hackingLevel = ns.getHackingLevel();
@@ -63,6 +66,9 @@ function findTargets(ns, servers) {
         }
     }
     hackTarget = getServer(ns, "foodnstuff");
+    if (!hackTarget.rooted(ns)) {
+        takeover(ns, hackTarget);
+    }
     ns.print(`Hackable server defaulted to: ${hackTarget.hostname}`);
 }
 function disableLogs(ns) {
