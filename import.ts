@@ -14,7 +14,7 @@ let filenames: Array<Script> = [
     "contract-solver.js",
     "find-contracts.js",
     "purchase-hacknet-node.js",
-    "purchase-server-8gb.js",
+    "purchase-server.js",
     "startup.js",
     "solve-contracts.js",
     "utilities.js",

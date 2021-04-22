@@ -4,7 +4,7 @@ import {getServers, Server} from "/scripts/utilities.js"
 const home: Host = "home";
 const autohackScript: Script = "/scripts/autohack-target.js";
 const autoweakenScript: Script = "/scripts/autoweaken-target.js";
-const pservAutobuyScript: Script = "/scripts/purchase-server-8gb.js";
+const pservAutobuyScript: Script = "/scripts/purchase-server.js";
 const hacknetAutobuyScript: Script = "/scripts/purchase-hacknet-node.js";
 
 let homeRamSetAside: number = 100;
