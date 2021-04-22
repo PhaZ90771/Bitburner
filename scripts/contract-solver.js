@@ -2,7 +2,7 @@ export async function main(ns) {
     let filename = ns.args[0];
     let hostname = ns.args[1];
     let contract = getCodingContract(ns, filename, hostname);
-    runSolver(ns, contract);
+    await runSolver(ns, contract);
 }
 export function getCodingContract(ns, filename, hostname) {
     let contract = {
@@ -40,10 +40,10 @@ function printStatus(ns, contract, status) {
     ns.print("/status/");
     ns.print(status);
 }
-export function runSolver(ns, contract) {
+export async function runSolver(ns, contract) {
     printStatus(ns, contract, "Selecting solver...");
     if (solvers[contract.type] != null) {
-        let answer = solvers[contract.type](ns, contract);
+        let answer = await solvers[contract.type](ns, contract);
         printStatus(ns, contract, `Answer is: ${answer}`);
         let rewardMessage = contract.attempt(ns, answer);
         printStatus(ns, contract, rewardMessage);
@@ -54,7 +54,7 @@ export function runSolver(ns, contract) {
         ns.exit();
     }
 }
-let SubarrayWithMaximumSum_Setup = function (ns, contract) {
+let SubarrayWithMaximumSum_Setup = async function (ns, contract) {
     let args = {
         largestSum: contract.data[0],
         start: 0,
@@ -63,9 +63,10 @@ let SubarrayWithMaximumSum_Setup = function (ns, contract) {
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     };
-    return SubarrayWithMaximumSum_Solve(ns, contract.data, args);
+    return await SubarrayWithMaximumSum_Solve(ns, contract.data, args);
 };
-function SubarrayWithMaximumSum_Solve(ns, contract, args) {
+async function SubarrayWithMaximumSum_Solve(ns, contract, args) {
+    await ns.sleep(1);
     printStatus(ns, contract, args.progress(ns));
     while (args.start < contract.data.length) {
         let sum = 0;
@@ -82,7 +83,7 @@ function SubarrayWithMaximumSum_Solve(ns, contract, args) {
     }
     return args.largestSum;
 }
-let SpiralizeMatrix_Setup = function (ns, contract) {
+let SpiralizeMatrix_Setup = async function (ns, contract) {
     let args = {
         current: 0,
         max: contract.data.length * contract.data[0].length,
@@ -90,9 +91,10 @@ let SpiralizeMatrix_Setup = function (ns, contract) {
             return ns.nFormat(this.current / this.max, "0.0%");
         },
     };
-    return SpiralizeMatrix_Solve(ns, contract, args);
+    return await SpiralizeMatrix_Solve(ns, contract, args);
 };
-function SpiralizeMatrix_Solve(ns, contract, args) {
+async function SpiralizeMatrix_Solve(ns, contract, args) {
+    await ns.sleep(1);
     let ret = [];
     printStatus(ns, contract, args.progress(ns));
     let left = 0;
@@ -163,13 +165,14 @@ function SpiralizeMatrix_Solve(ns, contract, args) {
     }
     return ret;
 }
-let SolveArrayJumpingGame_Setup = function (ns, contract) {
+let SolveArrayJumpingGame_Setup = async function (ns, contract) {
     let args = {
         maxValue: -1,
     };
-    return solveArrayJumpingGame_Solve(ns, contract, 0, args);
+    return await solveArrayJumpingGame_Solve(ns, contract, 0, args);
 };
-function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
+async function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
+    await ns.sleep(1);
     let end = contract.data.length - 1;
     if (pos <= end && pos > args.maxValue) {
         args.maxValue = pos;
@@ -185,21 +188,22 @@ function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
         return 0;
     for (let jump = 1; jump <= maxJump; jump++) {
         let landing = pos + jump;
-        let result = solveArrayJumpingGame_Solve(ns, contract, landing, args);
+        let result = await solveArrayJumpingGame_Solve(ns, contract, landing, args);
         if (result == 1) {
             return 1;
         }
     }
     return 0;
 }
-let MinimumPathSumInATriangle_Setup = function (ns, contract) {
+let MinimumPathSumInATriangle_Setup = async function (ns, contract) {
     let args = {
         minValue: 0,
         depthValue: -1,
     };
-    return MinimumPathSumInATriangle_Solve(ns, contract, 0, 0, 0, args);
+    return await MinimumPathSumInATriangle_Solve(ns, contract, 0, 0, 0, args);
 };
-function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
+async function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
+    await ns.sleep(1);
     let endDepth = contract.data.length - 1;
     let end = y == endDepth;
     sum += contract.data[y][x];
@@ -212,8 +216,8 @@ function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
     if (end) {
         return sum;
     }
-    let left = MinimumPathSumInATriangle_Solve(ns, contract.data, x, y + 1, sum, args);
-    let right = MinimumPathSumInATriangle_Solve(ns, contract.data, x + 1, y + 1, sum, args);
+    let left = await MinimumPathSumInATriangle_Solve(ns, contract.data, x, y + 1, sum, args);
+    let right = await MinimumPathSumInATriangle_Solve(ns, contract.data, x + 1, y + 1, sum, args);
     if (left < right) {
         return left;
     }
@@ -221,14 +225,14 @@ function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
         return right;
     }
 }
-let UniquePathsInAGridI_Setup = function (ns, contract) {
+let UniquePathsInAGridI_Setup = async function (ns, contract) {
     let m = contract.data[0];
     let n = contract.data[0];
     let newData = new Array(m).fill(new Array(n).fill(0));
     contract.data = newData;
-    return UniquePathsInAGridII_Setup(ns, contract);
+    return await UniquePathsInAGridII_Setup(ns, contract);
 };
-let UniquePathsInAGridII_Setup = function (ns, contract) {
+let UniquePathsInAGridII_Setup = async function (ns, contract) {
     let bottom = contract.data.length - 1;
     let right = contract.data[0].length - 1;
     if (contract.data[0][0] == 1)
@@ -251,9 +255,10 @@ let UniquePathsInAGridII_Setup = function (ns, contract) {
         }
     };
     printStatus(ns, contract, args.status());
-    return UniquePathsInAGrid_Solve(ns, contract, 0, 0, args);
+    return await UniquePathsInAGrid_Solve(ns, contract, 0, 0, args);
 };
-function UniquePathsInAGrid_Solve(ns, contract, x, y, args) {
+async function UniquePathsInAGrid_Solve(ns, contract, x, y, args) {
+    await ns.sleep(1);
     if (x > args.right)
         return 0;
     if (y > args.bottom)
@@ -271,8 +276,8 @@ function UniquePathsInAGrid_Solve(ns, contract, x, y, args) {
         printStatus(ns, contract, args.status());
     }
     let sum = 0;
-    sum += UniquePathsInAGrid_Solve(ns, contract, x, y + 1, args);
-    sum += UniquePathsInAGrid_Solve(ns, contract, x + 1, y, args);
+    sum += await UniquePathsInAGrid_Solve(ns, contract, x, y + 1, args);
+    sum += await UniquePathsInAGrid_Solve(ns, contract, x + 1, y, args);
     return sum;
 }
 let solvers = {
@@ -288,7 +293,7 @@ let solvers = {
     "Algorithmic Stock Trader III": null,
     "Algorithmic Stock Trader IV": null,
     "Minimum Path Sum in a Triangle": MinimumPathSumInATriangle_Setup,
-    "Unique Paths in a Grid I": null,
+    "Unique Paths in a Grid I": UniquePathsInAGridI_Setup,
     "Unique Paths in a Grid II": UniquePathsInAGridII_Setup,
     "Sanitize Parentheses in Expression": null,
     "Find All Valid Math Expressions": null,
