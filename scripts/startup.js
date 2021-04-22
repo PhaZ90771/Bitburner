@@ -1,4 +1,4 @@
-import { getServers } from "/scripts/utilities.js";
+import { getServer, getServers } from "/scripts/utilities.js";
 const home = "home";
 const autohackScript = "/scripts/autohack-target.js";
 const autoweakenScript = "/scripts/autoweaken-target.js";
@@ -62,8 +62,11 @@ function findTargets(ns, servers) {
             return;
         }
     }
+    hackTarget = getServer(ns, "foodnstuff");
+    ns.print(`Hackable server defaulted to: ${hackTarget.hostname}`);
 }
 function disableLogs(ns) {
+    ns.disableLog("disableLog");
     ns.disableLog("sleep");
     ns.disableLog("brutessh");
     ns.disableLog("ftpcrack");
@@ -77,6 +80,11 @@ function disableLogs(ns) {
     ns.disableLog("run");
     ns.disableLog("exec");
     ns.disableLog("getServerRam");
+    ns.disableLog("getServerRequiredHackingLevel");
+    ns.disableLog("getServerMaxMoney");
+    ns.disableLog("getServerNumPortsRequired");
+    ns.disableLog("getServerMinSecurityLevel");
+    ns.disableLog("getHackingLevel");
 }
 function countPortHackers(ns) {
     let count = 0;
