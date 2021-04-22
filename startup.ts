@@ -1,5 +1,5 @@
 import {BitBurner as NS, Host, ProcessInfo, PurchaseableProgram, Script} from "Bitburner"
-import {getServers, Server} from "/scripts/utilities.js"
+import {getServer, getServers, Server} from "/scripts/utilities.js"
 
 const home: Host = "home";
 const autohackScript: Script = "/scripts/autohack-target.js";
@@ -83,6 +83,7 @@ function findTargets(ns: NS, servers: Array<Server>) {
             return;
         }
     }
+    hackTarget = getServer(ns, "foodnstuff");
 }
 
 function disableLogs(ns: NS): void {
