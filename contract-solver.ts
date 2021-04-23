@@ -86,7 +86,7 @@ let SubarrayWithMaximumSum_Setup: Function = async function (ns: NS, contract: C
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     }
-    return await SubarrayWithMaximumSum_Solve(ns, contract.data, args);
+    return await SubarrayWithMaximumSum_Solve(ns, contract, args);
 }
 async function SubarrayWithMaximumSum_Solve(ns: NS, contract: CodingContractInfo, args: SubarrayWithMaximumSum_Args): Promise<number> {
     await ns.sleep(1);
