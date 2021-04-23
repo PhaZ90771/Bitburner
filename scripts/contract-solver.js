@@ -63,7 +63,7 @@ let SubarrayWithMaximumSum_Setup = async function (ns, contract) {
             return `"Largest subarray sum is: [${this.start}:#{i}]${this.largestSum}`;
         }
     };
-    return await SubarrayWithMaximumSum_Solve(ns, contract.data, args);
+    return await SubarrayWithMaximumSum_Solve(ns, contract, args);
 };
 async function SubarrayWithMaximumSum_Solve(ns, contract, args) {
     await ns.sleep(1);
@@ -165,13 +165,13 @@ async function SpiralizeMatrix_Solve(ns, contract, args) {
     }
     return ret;
 }
-let SolveArrayJumpingGame_Setup = async function (ns, contract) {
+let ArrayJumpingGame_Setup = async function (ns, contract) {
     let args = {
         maxValue: -1,
     };
-    return await solveArrayJumpingGame_Solve(ns, contract, 0, args);
+    return await ArrayJumpingGame_Solve(ns, contract, 0, args);
 };
-async function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
+async function ArrayJumpingGame_Solve(ns, contract, pos, args) {
     await ns.sleep(1);
     let end = contract.data.length - 1;
     if (pos <= end && pos > args.maxValue) {
@@ -188,7 +188,7 @@ async function solveArrayJumpingGame_Solve(ns, contract, pos, args) {
         return 0;
     for (let jump = 1; jump <= maxJump; jump++) {
         let landing = pos + jump;
-        let result = await solveArrayJumpingGame_Solve(ns, contract, landing, args);
+        let result = await ArrayJumpingGame_Solve(ns, contract, landing, args);
         if (result == 1) {
             return 1;
         }
@@ -216,8 +216,8 @@ async function MinimumPathSumInATriangle_Solve(ns, contract, x, y, sum, args) {
     if (end) {
         return sum;
     }
-    let left = await MinimumPathSumInATriangle_Solve(ns, contract.data, x, y + 1, sum, args);
-    let right = await MinimumPathSumInATriangle_Solve(ns, contract.data, x + 1, y + 1, sum, args);
+    let left = await MinimumPathSumInATriangle_Solve(ns, contract, x, y + 1, sum, args);
+    let right = await MinimumPathSumInATriangle_Solve(ns, contract, x + 1, y + 1, sum, args);
     if (left < right) {
         return left;
     }
@@ -285,7 +285,7 @@ let solvers = {
     "Subarray with Maximum Sum": SubarrayWithMaximumSum_Setup,
     "Total Ways to Sum": null,
     "Spiralize Matrix": SpiralizeMatrix_Setup,
-    "Array Jumping Game": SolveArrayJumpingGame_Setup,
+    "Array Jumping Game": ArrayJumpingGame_Setup,
     "Merge Overlapping Intervals": null,
     "Generate IP Addresses": null,
     "Algorithmic Stock Trader I": null,

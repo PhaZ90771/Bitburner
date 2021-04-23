@@ -211,13 +211,13 @@ type SpiralizeMatrix_Args = {
     progress: Function,
 }
 
-let SolveArrayJumpingGame_Setup: Function = async function (ns: NS, contract: CodingContractInfo): Promise<number> {
+let ArrayJumpingGame_Setup: Function = async function (ns: NS, contract: CodingContractInfo): Promise<number> {
     let args: ArrayJumpingGame_Args = {
         maxValue: -1,
     };
-    return await solveArrayJumpingGame_Solve(ns, contract, 0, args);
+    return await ArrayJumpingGame_Solve(ns, contract, 0, args);
 }
-async function solveArrayJumpingGame_Solve(ns: NS, contract: CodingContractInfo, pos: number, args: ArrayJumpingGame_Args): Promise<number> {
+async function ArrayJumpingGame_Solve(ns: NS, contract: CodingContractInfo, pos: number, args: ArrayJumpingGame_Args): Promise<number> {
     await ns.sleep(1);
     let end: number = contract.data.length - 1;
     
@@ -234,7 +234,7 @@ async function solveArrayJumpingGame_Solve(ns: NS, contract: CodingContractInfo,
     
     for (let jump: number = 1; jump <= maxJump; jump++) {
         let landing: number =  pos + jump;
-        let result: number = await solveArrayJumpingGame_Solve(ns, contract, landing, args);
+        let result: number = await ArrayJumpingGame_Solve(ns, contract, landing, args);
         if (result == 1) {
             return 1;
         }
@@ -269,8 +269,8 @@ async function MinimumPathSumInATriangle_Solve(ns: NS, contract: CodingContractI
         return sum;
     }
     
-    let left: number = await MinimumPathSumInATriangle_Solve(ns, contract.data, x, y + 1, sum, args);
-    let right: number = await MinimumPathSumInATriangle_Solve(ns, contract.data, x + 1, y + 1, sum, args);
+    let left: number = await MinimumPathSumInATriangle_Solve(ns, contract, x, y + 1, sum, args);
+    let right: number = await MinimumPathSumInATriangle_Solve(ns, contract, x + 1, y + 1, sum, args);
     
     if (left < right) {
         return left;
@@ -352,7 +352,7 @@ let solvers: Object = {
     "Subarray with Maximum Sum": SubarrayWithMaximumSum_Setup,
     "Total Ways to Sum": null,
     "Spiralize Matrix": SpiralizeMatrix_Setup,
-    "Array Jumping Game": SolveArrayJumpingGame_Setup,
+    "Array Jumping Game": ArrayJumpingGame_Setup,
     "Merge Overlapping Intervals": null,
     "Generate IP Addresses": null,
     "Algorithmic Stock Trader I": null,
