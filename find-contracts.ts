@@ -7,10 +7,9 @@ const cctFilter: string = ".cct";
 let solvableFilter: boolean | null = null;
 
 export async function main(ns: NS): Promise<void> {
+    getArgs(ns);
     let contracts: Array<CodingContractInfo> = getCodingContracts(ns);
     if (solvableFilter !== null) {
-        let message: string = solvableFilter ? "solvable" : "not solvable";
-        ns.print(`Restricting to coding contracts that are ${message}`);
         contracts = contracts.filter(c => c.solvable() === solvableFilter);
     }
     ns.print(`${contracts.length} coding contract(s) found:`);
@@ -23,6 +22,8 @@ export async function main(ns: NS): Promise<void> {
 function getArgs(ns: NS) {
     if (ns.args.length > 0 && typeof ns.args[0] === "string") {
         solvableFilter = ns.args[0] === "true";
+        let message: string = solvableFilter ? "solvable" : "not solvable";
+        ns.tprint(`Restricting to coding contracts that are ${message}`);
     }
 }
 
