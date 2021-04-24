@@ -10,6 +10,11 @@ let target: Host = "foodnstuff";
 
 export async function main(ns: NS): Promise<void> {
     ns.disableLog("getServerMoneyAvailable");
+    ns.disableLog("getServerMinSecurityLevel");
+    ns.disableLog("getServerRequiredHackingLevel");
+    ns.disableLog("getServerMaxMoney");
+    ns.disableLog("getServerNumPortsRequired");
+    ns.disableLog("getServerRam");
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
 

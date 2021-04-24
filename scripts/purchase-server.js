@@ -6,6 +6,11 @@ let script = "/scripts/autohack-target.js";
 let target = "foodnstuff";
 export async function main(ns) {
     ns.disableLog("getServerMoneyAvailable");
+    ns.disableLog("getServerMinSecurityLevel");
+    ns.disableLog("getServerRequiredHackingLevel");
+    ns.disableLog("getServerMaxMoney");
+    ns.disableLog("getServerNumPortsRequired");
+    ns.disableLog("getServerRam");
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
     let maxServers = ns.getPurchasedServerLimit();
