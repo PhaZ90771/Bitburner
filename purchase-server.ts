@@ -3,6 +3,7 @@ import {getServerPrefix as prefix} from "/scripts/import.js"
 import {getMoney, Server, getServer} from "/scripts/utilities.js"
 
 const defaultRam: number = 8;
+const maxRam: number = 1048576;
 
 let script: Script = "/scripts/autohack-target.js";
 let target: Host = "foodnstuff";
@@ -12,25 +13,29 @@ export async function main(ns: NS): Promise<void> {
     ns.disableLog("purchaseServer");
     ns.disableLog("sleep");
 
-    let maxServers: number = ns.getPurchasedServerLimit() - 1;
+    let maxServers: number = ns.getPurchasedServerLimit();
     getArgs(ns);
     let servers: Array<Server> = getPurchasedServers(ns);
-    let initialPass: boolean = true;
+    let initialSetupPass: boolean = true;
+    let workToBeDone: boolean = true;
 
-    while(true) {
-        for (let i: number = 0; i < servers.length; i++)  {
+    while(workToBeDone) {
+        // Upgrade Check
+        let serversNeedingUpgrade = servers.filter(server => server.ram < maxRam);
+        for (let i: number = 0; i < serversNeedingUpgrade.length; i++)  {
             let newHostname: string = upgradeServer(ns, servers[i]);
             let upgraded: boolean = newHostname !== "";
             if (upgraded) {
                 servers[i] = getServer(ns, newHostname);
             }
-            if (upgraded || initialPass) {
+            if (upgraded || initialSetupPass) {
                 await setup(ns, servers[i]);
             }
         }
-        initialPass = false;
+        initialSetupPass = false;
 
-        while (servers.length < maxServers) {
+        // Purchase Check
+        while (servers.length < maxServers - 1) {
             let targetHostname = generateHostname(servers.length, defaultRam);
             let success = purchaseServer(ns, targetHostname, defaultRam);
             if (success) {
@@ -39,6 +44,18 @@ export async function main(ns: NS): Promise<void> {
                 await setup(ns, newServer);
             }
             await ns.sleep(1);
+        }
+
+        // Final Purchase
+        if (serversNeedingUpgrade.length == 0 && servers.length == maxServers - 1) {
+            let targetHostname = generateHostname(servers.length, maxRam);
+            let success = purchaseServer(ns, targetHostname, maxRam);
+            if (success) {
+                let newServer = getServer(ns, targetHostname);
+                servers.push(newServer);
+                await setup(ns, newServer);
+                workToBeDone = false;
+            }
         }
         await ns.sleep(1);
     }
@@ -101,8 +118,11 @@ async function setup(ns: NS, server: Server): Promise<void> {
 }
 
 function upgradeServer(ns: NS, server: Server) {
-    let index: number = getIndexFromHostname(server.hostname);
     let targetRam: number = server.ram * 2;
+    if (targetRam > maxRam) { // Max ram for purchased servers
+        return ""
+    }
+    let index: number = getIndexFromHostname(server.hostname);
     let targetHostname: string = generateHostname(index, targetRam);
     let money: number = getMoney(ns);
     let cost: number = ns.getPurchasedServerCost(targetRam);
