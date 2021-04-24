@@ -22,11 +22,11 @@ export async function main(ns: NS): Promise<void> {
     getArgs(ns);
     let servers: Array<Server> = getPurchasedServers(ns);
     let initialSetupPass: boolean = true;
+    let serversNeedingUpgrade = servers.filter(server => server.ram < maxRam);
     let workToBeDone: boolean = true;
 
     while(workToBeDone) {
         // Upgrade Check
-        let serversNeedingUpgrade = servers.filter(server => server.ram < maxRam);
         for (let i: number = 0; i < serversNeedingUpgrade.length; i++)  {
             let newHostname: string = upgradeServer(ns, servers[i]);
             let upgraded: boolean = newHostname !== "";
@@ -61,12 +61,14 @@ export async function main(ns: NS): Promise<void> {
                 let newServer = getServer(ns, targetHostname);
                 servers.push(newServer);
                 await setup(ns, newServer);
-                workToBeDone = false;
-                ns.print(`Final purchase at max ram complete`);
             }
         }
+
+        serversNeedingUpgrade = servers.filter(server => server.ram < maxRam);
+        workToBeDone = serversNeedingUpgrade.length > 0 || servers.length < maxServers
         await ns.sleep(1);
     }
+    ns.print(`Final purchase at max ram complete`);
 }
 
 function getArgs(ns: NS): void {
