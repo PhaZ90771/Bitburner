@@ -16,6 +16,7 @@ export async function main(ns: NS): Promise<void> {
     let maxServers: number = ns.getPurchasedServerLimit();
     getArgs(ns);
     let servers: Array<Server> = getPurchasedServers(ns);
+    servers = servers.sort((a:Server, b:Server) => getIndexFromHostname(a.hostname) - getIndexFromHostname(b.hostname));
     let initialSetupPass: boolean = true;
     let workToBeDone: boolean = true;
 
