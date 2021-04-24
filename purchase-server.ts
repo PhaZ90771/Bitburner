@@ -53,6 +53,8 @@ export async function main(ns: NS): Promise<void> {
 
         // Final Purchase
         if (serversNeedingUpgrade.length == 0 && servers.length == maxServers - 1) {
+            ns.print(`All other purchase and upgrades complete`);
+            ns.print(`Proceeding to final purchase at max ram`);
             let targetHostname = generateHostname(servers.length, maxRam);
             let success = purchaseServer(ns, targetHostname, maxRam);
             if (success) {
@@ -60,6 +62,7 @@ export async function main(ns: NS): Promise<void> {
                 servers.push(newServer);
                 await setup(ns, newServer);
                 workToBeDone = false;
+                ns.print(`Final purchase at max ram complete`);
             }
         }
         await ns.sleep(1);
@@ -104,7 +107,7 @@ function purchaseServer(ns: NS, targetHostname: Host, ram: number): boolean {
         ns.print(`Server purchase failed, need an additional $${needString}`);
         return false;
     }
-    ns.print(`Server purchase success`);
+    ns.print(`Server purchase success: ${targetHostname}`);
     return true;
 }
 
@@ -120,6 +123,7 @@ async function setup(ns: NS, server: Server): Promise<void> {
     let needed: number = ns.getScriptRam(script);
     let threads: number = Math.floor(ram / needed);
     ns.exec(script, server.hostname, threads, target);
+    ns.print(`Server setup success: ${server.hostname}`);
 }
 
 function upgradeServer(ns: NS, server: Server) {
@@ -135,6 +139,7 @@ function upgradeServer(ns: NS, server: Server) {
         if (purchaseServer(ns, targetHostname, targetRam)) {
             ns.killall(server.hostname);
             ns.deleteServer(server.hostname);
+            ns.print(`Server upgrade success: ${targetHostname}`);
             return targetHostname;
         }
     }
