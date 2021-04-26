@@ -101,4 +101,5 @@ let hostnames = [
     "4sigma",
     "kuai-gong",
     "b-and-a",
+    "w0r1d_d43m0n",
 ];
