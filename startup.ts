@@ -254,9 +254,19 @@ async function homeStartup(ns: NS): Promise<void> {
     let ramFree: number = ram[0] - ram[1] - homeRamSetAside;
     let needed: number = ns.getScriptRam(script);
     let threads: number = ramFree / needed;
+
+    if (threads > 0) {
+        ns.print(`${ramFree}GB ram free`);
+        ns.print(`${needed}GB ram needed per thread`);
+        ns.print(`${threads} thread(s) will be spun up`);
+        ns.run(script, threads, target.hostname);
+        ns.print("Autohack setup success");
+    }
+    else {
+        ns.print("Not enough ram");
+        ns.print("Autohack setup failure");
+    }    
     
-    ns.run(script, threads, target.hostname);
-    ns.print("Autohack setup success");
     ns.print("Complete home setup");
 }
 
